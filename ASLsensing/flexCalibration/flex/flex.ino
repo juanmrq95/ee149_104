@@ -44,6 +44,9 @@ const int middle_a = 40;
 
 int inPin = 8;     // pushbutton connected to digital pin 7
 
+int inPin_two = 2;
+int inPin_three = 3;
+
 void setup()
 {  
   // The speed is measured in bits per second, also known as
@@ -52,12 +55,18 @@ void setup()
   
   Serial.begin(9600);
   pinMode(inPin, INPUT);
+  pinMode(inPin_two, INPUT);
+  pinMode(inPin_three, INPUT);
 }
 
 
 void loop()
 {
   //val = digitalRead(inPin);     // read the input pin
+
+
+  delay(1000);
+
 
   float thumb_flex_voltage;
   float index_flex_voltage;
@@ -69,17 +78,25 @@ void loop()
   int index_value = 0;
   int middle_value = 0;
   int mid_touch = 0;
+  int index_touch = 0;
 
   thumb_flex_voltage = getVoltage(thumb_flex);
   index_flex_voltage = getVoltage(index_flex);
   middle_flex_voltage = getVoltage(middle_flex);
-  mid_touch = getVoltage(5);
-  if(mid_touch > 500){
+  mid_touch = digitalRead(inPin_three);//getVoltage(3);
+  index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
+  /*
+  if(mid_touch > 1000){
     mid_touch = 1;
   } else {
     mid_touch = 0;
   }
-
+    if(index_touch > 1000){
+    index_touch = 1;
+  } else {
+    index_touch = 0;
+  } 
+*/
   thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
   index_value = (index_flex_voltage - indexBias)/index_a;
   middle_value = (middle_flex_voltage - middleBias)/middle_a;
@@ -97,7 +114,11 @@ void loop()
   Serial.print(middle_value);
 
   Serial.print("    mid_touch: ");
-  Serial.println(mid_touch);
+  Serial.print(mid_touch);
+
+
+  Serial.print("    index_touch: ");
+  Serial.println(index_touch);
 
   /// Classify
   if(middle_value == 0){
@@ -106,13 +127,44 @@ void loop()
         Serial.println("invalid");
       } else if (thumb_value >= 1){
         Serial.println("BBBBBBBB");
+        while(middle_value == 0 && index_value == 0-1 && thumb_value >= 1)
+        {
+            thumb_flex_voltage = getVoltage(thumb_flex);
+            index_flex_voltage = getVoltage(index_flex);
+            middle_flex_voltage = getVoltage(middle_flex);
+  mid_touch = digitalRead(inPin_three);//getVoltage(3);
+  index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
+          
+            thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
+            index_value = (index_flex_voltage - indexBias)/index_a;
+            middle_value = (middle_flex_voltage - middleBias)/middle_a;
+        }
       }
     }
   } else if(middle_value == 1){
-      if(index_value == 0-1){
-        if(thumb_value == 0){
+      if(index_value == 0-2){
+        if(thumb_value == 2){
           if(mid_touch == 1){
             Serial.println("DDDDDD");
+            
+            while(middle_value == 1 
+            && index_value == 0-2 
+            && thumb_value == 2 
+            && mid_touch == 1)
+            {
+  thumb_flex_voltage = getVoltage(thumb_flex);
+  index_flex_voltage = getVoltage(index_flex);
+  middle_flex_voltage = getVoltage(middle_flex);
+  mid_touch = digitalRead(inPin_three);//getVoltage(3);
+  index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
+
+  thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
+  index_value = (index_flex_voltage - indexBias)/index_a;
+  middle_value = (middle_flex_voltage - middleBias)/middle_a;
+            }
+
+
+            
           }
         }
       } else if(index_value == 2-1) {
@@ -120,12 +172,44 @@ void loop()
           Serial.println("invalid");
       } else if (thumb_value >= 1){
           Serial.println("CCCCC");
+            while(index_value == 2-1 
+            && thumb_value >= 1)
+            {
+              thumb_flex_voltage = getVoltage(thumb_flex);
+              index_flex_voltage = getVoltage(index_flex);
+              middle_flex_voltage = getVoltage(middle_flex);
+  mid_touch = digitalRead(inPin_three);//getVoltage(3);
+  index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
+            
+              thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
+              index_value = (index_flex_voltage - indexBias)/index_a;
+              middle_value = (middle_flex_voltage - middleBias)/middle_a;
+            }
+
+
+
+          
       }
     }
   } else if(middle_value >= 2){
       if(index_value == 3-1) {
         if(thumb_value == 0){
           Serial.println("AAAA");
+          while(index_value == 3-1 
+          && thumb_value == 0
+          && middle_value >= 2)
+           {
+              thumb_flex_voltage = getVoltage(thumb_flex);
+              index_flex_voltage = getVoltage(index_flex);
+              middle_flex_voltage = getVoltage(middle_flex);
+  mid_touch = digitalRead(inPin_three);//getVoltage(3);
+  index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
+              thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
+              index_value = (index_flex_voltage - indexBias)/index_a;
+              middle_value = (middle_flex_voltage - middleBias)/middle_a;
+           }
+
+          
       } else if (thumb_value >= 1){
           Serial.println("invalid");
       }

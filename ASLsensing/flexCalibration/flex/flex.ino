@@ -41,7 +41,7 @@ int inPin = 8;     // pushbutton connected to digital pin 7
 int inPin_two = 2;
 int inPin_three = 3;
 
-//Defining State variables  
+//Defining State variables 
 typedef enum{
   INITIAL,
   MOVING, 
@@ -277,7 +277,8 @@ void loop()
               }
             }
           }
-
+            break;
+            
           default:
             break;
       

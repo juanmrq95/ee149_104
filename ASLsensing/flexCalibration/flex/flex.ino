@@ -150,7 +150,8 @@ void loop()
     state = MOVING;
   }
 
-  else if((state == MOVING) && (thumb_flex_roc == 0 && index_flex_roc == 0 && middle_flex_roc == 0 /*&& ring_flex_roc == 0 && pinky_flex_roc == 0*/)){
+  else if((state == MOVING) && (thumb_flex_roc == 0 && index_flex_roc == 0 
+    && middle_flex_roc == 0 /*&& ring_flex_roc == 0 && pinky_flex_roc == 0*/)){
     state = REST;
   }
 
@@ -164,25 +165,22 @@ void loop()
     case INITIAL:
     case MOVING:
         thumb_flex_voltage = getVoltage(thumb_flex);
-            index_flex_voltage = getVoltage(index_flex);
-            middle_flex_voltage = getVoltage(middle_flex);
-  mid_touch = digitalRead(inPin_three);//getVoltage(3);
-  index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
+        index_flex_voltage = getVoltage(index_flex);
+        middle_flex_voltage = getVoltage(middle_flex);
+        mid_touch = digitalRead(inPin_three);//getVoltage(3);
+        index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
           
-            thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
-            index_value = (index_flex_voltage - indexBias)/index_a;
-            middle_value = (middle_flex_voltage - middleBias)/middle_a;
+        thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
+        index_value = (index_flex_voltage - indexBias)/index_a;
+        middle_value = (middle_flex_voltage - middleBias)/middle_a;
 
-            thumb_flex_roc = thumb_flex_prev - thumb_value;
-            index_flex_roc = index_flex_prev - index_value;
-            middle_flex_roc = middle_flex_prev - middle_value;
+        thumb_flex_roc = thumb_flex_prev - thumb_value;
+        index_flex_roc = index_flex_prev - index_value;
+        middle_flex_roc = middle_flex_prev - middle_value;
+        
+        break;
             
-            break;
-            
-     case REST:
-                 
-  
-  /// Classify
+     case REST: /// Classify
           if(middle_value == 0){
             if(index_value == 0-1) {
               if(thumb_value == 0){
@@ -194,9 +192,9 @@ void loop()
                     thumb_flex_voltage = getVoltage(thumb_flex);
                     index_flex_voltage = getVoltage(index_flex);
                     middle_flex_voltage = getVoltage(middle_flex);
-          mid_touch = digitalRead(inPin_three);//getVoltage(3);
-          index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
-                  
+                    mid_touch = digitalRead(inPin_three);//getVoltage(3);
+                    index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
+                            
                     thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
                     index_value = (index_flex_voltage - indexBias)/index_a;
                     middle_value = (middle_flex_voltage - middleBias)/middle_a;
@@ -214,19 +212,16 @@ void loop()
                     && thumb_value == 2 
                     && mid_touch == 1)
                     {
-          thumb_flex_voltage = getVoltage(thumb_flex);
-          index_flex_voltage = getVoltage(index_flex);
-          middle_flex_voltage = getVoltage(middle_flex);
-          mid_touch = digitalRead(inPin_three);//getVoltage(3);
-          index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
-        
-          thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
-          index_value = (index_flex_voltage - indexBias)/index_a;
-          middle_value = (middle_flex_voltage - middleBias)/middle_a;
+                        thumb_flex_voltage = getVoltage(thumb_flex);
+                        index_flex_voltage = getVoltage(index_flex);
+                        middle_flex_voltage = getVoltage(middle_flex);
+                        mid_touch = digitalRead(inPin_three);//getVoltage(3);
+                        index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
+                      
+                        thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
+                        index_value = (index_flex_voltage - indexBias)/index_a;
+                        middle_value = (middle_flex_voltage - middleBias)/middle_a;
                     }
-        
-        
-                    
                   }
                 }
               } else if(index_value == 2-1) {
@@ -240,17 +235,13 @@ void loop()
                       thumb_flex_voltage = getVoltage(thumb_flex);
                       index_flex_voltage = getVoltage(index_flex);
                       middle_flex_voltage = getVoltage(middle_flex);
-          mid_touch = digitalRead(inPin_three);//getVoltage(3);
-          index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
+                      mid_touch = digitalRead(inPin_three);//getVoltage(3);
+                      index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
                     
                       thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
                       index_value = (index_flex_voltage - indexBias)/index_a;
                       middle_value = (middle_flex_voltage - middleBias)/middle_a;
-                    }
-        
-        
-        
-                  
+                    }   
               }
             }
           } else if(middle_value >= 2){
@@ -264,8 +255,8 @@ void loop()
                       thumb_flex_voltage = getVoltage(thumb_flex);
                       index_flex_voltage = getVoltage(index_flex);
                       middle_flex_voltage = getVoltage(middle_flex);
-          mid_touch = digitalRead(inPin_three);//getVoltage(3);
-          index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
+                      mid_touch = digitalRead(inPin_three);//getVoltage(3);
+                      index_touch = digitalRead(inPin_two);//getVoltage(3)//getVoltage(4);
                       thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
                       index_value = (index_flex_voltage - indexBias)/index_a;
                       middle_value = (middle_flex_voltage - middleBias)/middle_a;
@@ -288,9 +279,8 @@ void loop()
    
  
   //delay(100); // repeat once per second (change as you wish!)
-}
-   
-   delay(1000);
+  }
+  delay(1000);
 }
 
 

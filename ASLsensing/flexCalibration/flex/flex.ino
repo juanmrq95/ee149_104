@@ -95,11 +95,11 @@ void loop()
   //float ring_flex_roc;
   //float pinky_flex_roc;
 
-   thumb_flex_prev = thumb_value ;
-   index_flex_prev = index_value ;
-   middle_flex_prev = middle_value ;
-   //ring_flex_prev = ring_value ;
-   //pinky_flex_prev = pinky_value ;
+  thumb_flex_prev = thumb_value ;
+  index_flex_prev = index_value ;
+  middle_flex_prev = middle_value ;
+ //ring_flex_prev = ring_value ;
+ //pinky_flex_prev = pinky_value ;
 
   thumb_flex_voltage = getVoltage(thumb_flex);
   index_flex_voltage = getVoltage(index_flex);

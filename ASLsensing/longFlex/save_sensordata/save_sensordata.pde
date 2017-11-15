@@ -9,7 +9,7 @@ void setup()
   String portName = Serial.list()[4]; 
   //change the 0 to a 1 or 2 etc. to match your port
   myPort = new Serial(this, portName, 9600); 
-  output = createWriter("baseline_biceps_r2.txt");
+  output = createWriter("index1.txt");
 }
    
 void draw()

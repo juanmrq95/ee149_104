@@ -36,11 +36,18 @@ const int pinky = 0;
   float data[5];
   float prev_data[5];
 
-  char prev_ltr;
+  //char ltr;
 typedef enum{
   INITIAL,
-  MOVING, 
-  REST
+  CLASSIFY_MOVING, 
+  CLASSIFY,
+  CLASSIFY_PRINT,
+  CLASSIFY_WAIT,
+  EDIT, 
+  EDIT_MOVING,
+  EDIT_PRINT,
+  EDIT_WAIT
+  
 } gloveState;
 
 
@@ -187,8 +194,9 @@ int check_movement()
 
 void loop()
 {
-  gloveState state = INITIAL;
-  
+  static gloveState state = INITIAL;
+  static int classify = 0;
+  static char ltr = 'd';
 
 
   /*if( !check_movement())
@@ -199,25 +207,42 @@ void loop()
 
   
  if(state == INITIAL && !check_movement()){
-    state = MOVING;
+    state = CLASSIFY_MOVING;
   }
 
- else if(state == INITIAL && check_movement()){
-    state = REST;
+  else if(state == CLASSIFY_MOVING && check_movement()){
+    state = CLASSIFY;
   }
-  else if(state == MOVING && check_movement()){
-    state = REST;
+  
+  else if(state == CLASSIFY_MOVING && !check_movement()){
+    state = CLASSIFY_MOVING;
+  }
+  
+  else if(state == CLASSIFY && classify==1 && check_movement()){
+    state = CLASSIFY_PRINT;
   }
 
-  else if(state == REST && !check_movement()){
-    state = MOVING;
+  
+  else if(state == CLASSIFY && classify== 0 && check_movement()){
+    state = CLASSIFY_MOVING;
   }
-
+  
+  else if(state == CLASSIFY_PRINT){
+    state = CLASSIFY_WAIT;
+  }
+  
+  else if(state == CLASSIFY_WAIT && check_movement()){
+    state = CLASSIFY_WAIT;
+  }
+  
+  else if(state == CLASSIFY_WAIT && !check_movement()){
+    state = CLASSIFY_MOVING;
+  }
 
   switch (state){
     case INITIAL:
-    case MOVING:
-           /*  Serial.print(thumbValue);
+    case CLASSIFY_MOVING:
+ /*            Serial.print(thumbValue);
   Serial.print("   index: ");
   Serial.print(indexValue);
   Serial.print("   middle: ");
@@ -233,9 +258,12 @@ void loop()
             delay(750);
 
             calibrate();
+
+            classify = 0;
+            //Serial.println(state);
             break;
   
-    case REST:
+    case CLASSIFY:
      calibrate();
       /*Serial.print("   index: ");
   Serial.print(indexValue);
@@ -248,7 +276,7 @@ void loop()
   Serial.println(state);
                Serial.println(state);
  */
-  
+   // Serial.println(state);
   // H
   if(data[0] == 0
   && data[1] == 0
@@ -256,15 +284,10 @@ void loop()
   && data[3] == 2
   && data[4] == 2)
   {
-    if(prev_ltr != "H"){
-      Serial.print("H");
-    }
-    prev_ltr = "H";
-    while(check_movement())
-    {
-      calibrate();
-    }
-    return;
+    ltr = 'H';
+ //   prev_ltr = "H";
+    classify = 1;
+    //return;
    
   }
 
@@ -276,15 +299,10 @@ void loop()
   && data[3] == 2
   && data[4] == 2)
   {
-    if(prev_ltr != "E"){
-      Serial.print("E");
-  }
-    prev_ltr = "E";  
-    while(check_movement())
-    {
-      calibrate();
-    }
-    return;
+    ltr = 'E';
+//    prev_ltr = "E";  
+    classify = 1;
+    //return;
    
   }
  
@@ -296,15 +314,9 @@ void loop()
   && data[3] == 2
   && data[4] == 2)
   {
-     if(prev_ltr != "L")
-      Serial.print("L");
-    
-    prev_ltr = "L";
-    while(check_movement())
-    {
-      calibrate();
-    }
-    return;
+    ltr = 'L';
+    classify = 1;
+    //return;
    
   }
 
@@ -317,15 +329,9 @@ void loop()
   && data[3] == 2
   && data[4] == 2)
   {
-     if(prev_ltr != "O")
-      Serial.print("O");
-    
-    prev_ltr = "O";
-    while(check_movement())
-    {
-      calibrate();
-    }
-    return;
+    ltr = 'O';
+    classify = 1;
+    //return;
    
   }
 
@@ -337,15 +343,9 @@ void loop()
   && data[3] == 0
   && data[4] == 0)
   {
-     if(prev_ltr != "_"){
-      Serial.print("_");
-     }
-    prev_ltr = "_";
-    while(check_movement())
-    {
-      calibrate();
-    }
-    return;
+    ltr = '_';
+    classify = 1;
+    //return;
    
   }
 
@@ -357,15 +357,9 @@ void loop()
   && data[3] == 0
   && data[4] == 2)
   {
-     if(prev_ltr != "W"){
-      Serial.print("W");
-     }
-    prev_ltr = "W";
-    while(check_movement())
-    {
-      calibrate();
-    }
-    return;
+    ltr = 'W';
+    classify = 1;
+    //return;
    
   }
 
@@ -379,15 +373,9 @@ void loop()
   && data[3] == 2
   && data[4] == 2)
   {
-     if(prev_ltr != "R"){
-      Serial.print("R");
-     }
-    prev_ltr = "R";
-    while(check_movement())
-    {
-      calibrate();
-    }
-    return;
+    ltr = 'R';
+    classify = 1;
+    //return;
    
   }
 
@@ -400,19 +388,35 @@ void loop()
   && data[3] == 2
   && data[4] == 2)
   {
-     if(prev_ltr != "D"){
-      Serial.print("D");
-     }
-    prev_ltr = "D";
-    while(check_movement())
-    {
-      calibrate();
-    }
-    return;
+    ltr = 'D';
+
+    classify = 1;
+    //return;
    
   }
+  else
+  {
+   ltr = '\0';
+   classify = 1;
+  }
+  classify =1;
    break;
 
+  case CLASSIFY_PRINT:
+  //Serial.println(state);
+  Serial.print(ltr);
+  break;
+
+  case CLASSIFY_WAIT:
+  //Serial.println(state);
+  
+            calibrate();
+
+            delay(750);
+
+            calibrate();
+   
+  break;
   
   default:
     
@@ -428,7 +432,7 @@ void loop()
   // moving down to the NEXT line.
   
  
-  delay(100); // repeat once per second (change as you wish!)
+ // delay(100); // repeat once per second (change as you wish!)
 }
 
 

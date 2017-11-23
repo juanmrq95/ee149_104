@@ -1,3 +1,6 @@
+#include <english.h>
+#include <TTS.h>
+
 /*
 
 Heart Rate SENSOR (Week 8)
@@ -31,6 +34,7 @@ const int middle = 2;
 const int ring = 1;
 const int pinky = 0;
 
+TTS text2speech;  // speech output is digital pin 10
 
   float thumbValue;
   float indexValue;
@@ -188,8 +192,7 @@ void loop()
 
   calibrate();
 
-  delay(75
-  0);
+  delay(750);
 
   calibrate();
 
@@ -206,7 +209,7 @@ void loop()
   && data[3] == 2
   && data[4] == 2)
   {
-    Serial.print("H");
+    Serial.print("h");
     while(check_movement())
     {
       calibrate();
@@ -218,12 +221,12 @@ void loop()
   // E
  
   else if(data[0] == 2
-  && data[1] == 2
+  && data[1] == 1
   && data[2] == 2
   && data[3] == 2
   && data[4] == 2)
   {
-    Serial.print("E");
+    Serial.print("e");
     while(check_movement())
     {
       calibrate();
@@ -240,7 +243,7 @@ void loop()
   && data[3] == 2
   && data[4] == 2)
   {
-    Serial.print("L");
+    Serial.print("l");
     while(check_movement())
     {
       calibrate();
@@ -258,7 +261,7 @@ void loop()
   && data[3] == 2
   && data[4] == 2)
   {
-    Serial.print("O");
+    Serial.print("o");
     while(check_movement())
     {
       calibrate();
@@ -292,7 +295,7 @@ void loop()
   && data[3] == 0
   && data[4] == 2)
   {
-    Serial.print("W");
+    Serial.print("w");
     while(check_movement())
     {
       calibrate();
@@ -311,7 +314,7 @@ void loop()
   && data[3] == 2
   && data[4] == 2)
   {
-    Serial.print("R");
+    Serial.print("r");
     while(check_movement())
     {
       calibrate();
@@ -329,7 +332,7 @@ void loop()
   && data[3] == 2
   && data[4] == 2)
   {
-    Serial.print("D");
+    Serial.print("d");
     while(check_movement())
     {
       calibrate();
@@ -338,15 +341,15 @@ void loop()
    
   }
 
-
+/*
 
  
-//calibrate();
+  calibrate();
 
 
   // To send data from the Arduino to the serial monitor window,
   // we use the Serial.print() function.
-/*
+
   Serial.print("thumb: ");
   Serial.print(thumbValue);
   Serial.print("   index: ");
@@ -357,12 +360,12 @@ void loop()
   Serial.print(ringValue);
   Serial.print("   pinky: ");
   Serial.println(pinkyValue);
-*/
+
   // Note that the above statement uses "println", which will insert
   // a "carriage return" character at the end of whatever it prints,
   // moving down to the NEXT line.
   
- 
+*/ 
   delay(100); // repeat once per second (change as you wish!)
 }
 

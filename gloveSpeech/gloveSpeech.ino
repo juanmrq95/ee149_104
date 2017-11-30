@@ -10,7 +10,6 @@
   This program provides a simple demonstration of the Emic 2 Text-to-Speech
   Module. Please refer to the product manual for full details of system 
   functionality and capabilities.
-
   Revisions:
   
   1.0 (February 13, 2012): Initial release
@@ -110,6 +109,3 @@ void loop()  // Main code, to run repeatedly
     digitalWrite(ledPin, LOW);
   }
 }
-
-
-

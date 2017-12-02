@@ -21,7 +21,7 @@ This sketch was written by Professor Grace O'Connell and modifyied from Ardu. Co
 // signal pin.
 
 const int thumb = 4;
-const int index = 3;
+const int indexes = 3;
 const int middle = 2;
 const int ring = 1;
 const int pinky = 0;
@@ -43,9 +43,10 @@ typedef enum{
   CLASSIFY,
   CLASSIFY_PRINT,
   CLASSIFY_WAIT,
-  EDIT, 
+  EDIT,  
   EDIT_MOVING,
-  EDIT_PRINT,
+  EDIT_CLASSIFY,
+  EDIT_EXECUTE,
   EDIT_WAIT
   
 } gloveState;
@@ -76,7 +77,7 @@ void calibrate()
   update_data();
  
   thumbValue = getVoltage(thumb);
-  indexValue = getVoltage(index);
+  indexValue = getVoltage(indexes);
   middleValue = getVoltage(middle);
   ringValue = getVoltage(ring);
   pinkyValue = getVoltage(pinky);
@@ -196,7 +197,8 @@ void loop()
 {
   static gloveState state = INITIAL;
   static int classify = 0;
-  static char ltr = 'd';
+  static int edit = 0;
+  static char ltr;
 
 
   /*if( !check_movement())
@@ -205,7 +207,10 @@ void loop()
   }
   */
 
-  
+ if(state == INITIAL && check_movement()){
+    state = INITIAL;
+  }
+   
  if(state == INITIAL && !check_movement()){
     state = CLASSIFY_MOVING;
   }
@@ -226,6 +231,10 @@ void loop()
   else if(state == CLASSIFY && classify== 0 && check_movement()){
     state = CLASSIFY_MOVING;
   }
+
+  else if(state == CLASSIFY && classify== 2 && check_movement()){
+    state = EDIT;
+  }
   
   else if(state == CLASSIFY_PRINT){
     state = CLASSIFY_WAIT;
@@ -239,9 +248,51 @@ void loop()
     state = CLASSIFY_MOVING;
   }
 
+  else if(state == EDIT && check_movement()){
+    state = EDIT;
+  }
+
+  else if(state == EDIT && !check_movement()){
+    state = EDIT_MOVING;
+  }
+
+  else if(state == EDIT_MOVING && check_movement()){
+    state = EDIT_CLASSIFY;
+  }
+
+  else if(state == CLASSIFY && edit == 1 && check_movement()){
+    state = EDIT_EXECUTE;
+  }
+  
+  else if(state == CLASSIFY && edit == 0 && check_movement()){
+    state = EDIT_MOVING;
+  }
+
+  else if(state == CLASSIFY && edit == 2 && check_movement()){
+    state = CLASSIFY_MOVING;
+  }
+  
+
+  else if(state == EDIT_MOVING && !check_movement()){
+    state = EDIT_MOVING;
+  }  
+
+  else if(state == EDIT_EXECUTE){
+    state = EDIT_WAIT;
+  }  
+
+  else if(state == EDIT_WAIT && check_movement()){
+    state = EDIT_WAIT;
+  }
+
+  else if(state == EDIT_WAIT && !check_movement()){
+    state = EDIT_MOVING;
+  }
+  
   switch (state){
     case INITIAL:
     case CLASSIFY_MOVING:
+    case CLASSIFY_WAIT:
  /*            Serial.print(thumbValue);
   Serial.print("   index: ");
   Serial.print(indexValue);
@@ -255,10 +306,7 @@ void loop()
 */
             calibrate();
 
-            delay(750);
-
-            calibrate();
-
+            
             classify = 0;
             //Serial.println(state);
             break;
@@ -407,16 +455,8 @@ void loop()
   Serial.print(ltr);
   break;
 
-  case CLASSIFY_WAIT:
-  //Serial.println(state);
   
-            calibrate();
 
-            delay(750);
-
-            calibrate();
-   
-  break;
   
   default:
     
@@ -431,8 +471,19 @@ void loop()
   // a "carriage return" character at the end of whatever it prints,
   // moving down to the NEXT line.
   
- 
- // delay(100); // repeat once per second (change as you wish!)
+ /*//Serial.println(state);
+  Serial.print(thumbValue);
+  Serial.print("   index: ");
+  Serial.print(indexValue);
+  Serial.print("   middle: ");
+  Serial.print(middleValue);
+  Serial.print("   ring: ");
+  Serial.print(ringValue);
+  Serial.print("   pinky: ");
+  Serial.println(pinkyValue);
+  Serial.println(state);
+*/
+ delay(150); // repeat once per second (change as you wish!)
 }
 
 

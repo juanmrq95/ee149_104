@@ -1,10 +1,10 @@
+#include <Wire.h>
+
 #include <FreeSixIMU.h>
 #include <FIMU_ADXL345.h>
 #include <FIMU_ITG3200.h>
 
-#include <Wire.h>
-
-unsigned int angles[6]; // yaw pitch roll
+int angles[6]; // yaw pitch roll
 
 // Set the FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();

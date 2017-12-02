@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define rxPin   10  // Serial input (connects to Emic 2's SOUT pin)
-#define txPin   11  // Serial output (connects to Emic 2's SIN pin)
+#define rxPin   1  // Serial input(TX on Nano) (connects to Emic 2's SOUT pin)
+#define txPin   0  // Serial output(RX on Nano) (connects to Emic 2's SIN pin)
 #define ledPin  13  // Most Arduino boards have an on-board LED on this pin
 
 // set up a new serial port

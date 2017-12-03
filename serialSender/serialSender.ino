@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-SoftwareSerial emicSerial(6, 5); // RX, TX
+SoftwareSerial emicSerial(6, 5); // RX, TX pins work but must connect uno and nano grounds together
 
 void setup()  // Set up code called once on start-up
 {  
@@ -35,16 +35,22 @@ void loop() {
   //Serial.print(4);
   int number = 1;
   emicSerial.write('h');
+  Serial.write('h');
   delay(250);
   emicSerial.write('e');
+  Serial.write('h');
   delay(250);
   emicSerial.write('l');
+  Serial.write('h');
   delay(250);
   emicSerial.write('l');
+  Serial.write('h');
   delay(250);
   emicSerial.write('o');
+  Serial.write('h');
   delay(250);
   emicSerial.write('.');
+  Serial.write('h');
   delay(250);
 
 }

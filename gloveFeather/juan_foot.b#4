@@ -157,9 +157,9 @@
 <board>
 <plain>
 <wire x1="0" y1="0" x2="76.18" y2="0" width="0" layer="20"/>
-<wire x1="76.18" y1="0" x2="76.18" y2="44.12" width="0" layer="20"/>
-<wire x1="76.18" y1="44.12" x2="0" y2="44.12" width="0" layer="20"/>
-<wire x1="0" y1="44.12" x2="0" y2="0" width="0" layer="20"/>
+<wire x1="76.18" y1="0" x2="76.18" y2="41.58" width="0" layer="20"/>
+<wire x1="76.18" y1="41.58" x2="0" y2="41.58" width="0" layer="20"/>
+<wire x1="0" y1="41.58" x2="0" y2="0" width="0" layer="20"/>
 </plain>
 <libraries>
 <library name="adafruit">
@@ -514,32 +514,30 @@ design rules under a new name.</description>
 </pass>
 </autorouter>
 <elements>
-<element name="MS1" library="adafruit" package="FEATHERWING" value="FEATHERWING" x="11.43" y="11.43"/>
-<element name="LCD_DISPLAY" library="SparkFun-Connectors" package="1X04" value="" x="43.18" y="40.64" rot="R180">
-<attribute name="PROD_ID" value="CONN-09696" x="43.18" y="40.64" size="1.778" layer="27" rot="R180" display="off"/>
+<element name="MS1" library="adafruit" package="FEATHERWING" value="FEATHERWING" x="10.16" y="8.89"/>
+<element name="LCD_DISPLAY" library="SparkFun-Connectors" package="1X04" value="" x="53.34" y="2.54" rot="R180">
+<attribute name="PROD_ID" value="CONN-09696" x="53.34" y="2.54" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
-<element name="GND" library="SparkFun-Connectors" package="1X04" value="" x="11.43" y="38.1" rot="R180">
-<attribute name="PROD_ID" value="CONN-09696" x="11.43" y="38.1" size="1.778" layer="27" rot="R180" display="off"/>
+<element name="GND" library="SparkFun-Connectors" package="1X04" value="" x="10.16" y="2.54" rot="R180">
+<attribute name="PROD_ID" value="CONN-09696" x="10.16" y="2.54" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
-<element name="J1" library="SparkFun-Connectors" package="1X04" value="" x="3.81" y="40.64">
-<attribute name="PROD_ID" value="CONN-09696" x="3.81" y="40.64" size="1.778" layer="27" display="off"/>
+<element name="J1" library="SparkFun-Connectors" package="1X04" value="" x="2.54" y="38.1">
+<attribute name="PROD_ID" value="CONN-09696" x="2.54" y="38.1" size="1.778" layer="27" display="off"/>
 </element>
-<element name="3V" library="SparkFun-Connectors" package="1X04" value="" x="3.81" y="5.08">
-<attribute name="PROD_ID" value="CONN-09696" x="3.81" y="5.08" size="1.778" layer="27" display="off"/>
+<element name="3V" library="SparkFun-Connectors" package="1X04" value="" x="15.24" y="38.1">
+<attribute name="PROD_ID" value="CONN-09696" x="15.24" y="38.1" size="1.778" layer="27" display="off"/>
 </element>
-<element name="J5" library="SparkFun-Connectors" package="1X04" value="" x="3.81" y="2.54">
-<attribute name="PROD_ID" value="CONN-09696" x="3.81" y="2.54" size="1.778" layer="27" display="off"/>
+<element name="J5" library="SparkFun-Connectors" package="1X04" value="" x="15.24" y="2.54">
+<attribute name="PROD_ID" value="CONN-09696" x="15.24" y="2.54" size="1.778" layer="27" display="off"/>
 </element>
-<element name="ANALOGS" library="SparkFun-Connectors" package="1X05" value="" x="27.94" y="5.08"/>
-<element name="DIGITAL" library="SparkFun-Connectors" package="1X04" value="" x="3.81" y="22.86" rot="R90">
-<attribute name="PROD_ID" value="CONN-09696" x="3.81" y="22.86" size="1.778" layer="27" rot="R90" display="off"/>
+<element name="ANALOGS" library="SparkFun-Connectors" package="1X05" value="" x="26.67" y="2.54"/>
+<element name="ACCEL" library="SparkFun-Connectors" package="1X04" value="" x="52.07" y="38.1" rot="R180">
+<attribute name="PROD_ID" value="CONN-09696" x="52.07" y="38.1" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
-<element name="ACCEL" library="SparkFun-Connectors" package="1X04" value="" x="3.81" y="10.16" rot="R90">
-<attribute name="PROD_ID" value="CONN-09696" x="3.81" y="10.16" size="1.778" layer="27" rot="R90" display="off"/>
+<element name="SPEAKER" library="SparkFun-Connectors" package="1X04" value="" x="31.75" y="38.1">
+<attribute name="PROD_ID" value="CONN-09696" x="31.75" y="38.1" size="1.778" layer="27" display="off"/>
 </element>
-<element name="SPEAKER" library="SparkFun-Connectors" package="1X04" value="" x="19.05" y="40.64">
-<attribute name="PROD_ID" value="CONN-09696" x="19.05" y="40.64" size="1.778" layer="27" display="off"/>
-</element>
+<element name="DIGITAL1" library="SparkFun-Connectors" package="1X05" value="" x="2.54" y="15.24" rot="R90"/>
 </elements>
 <signals>
 <signal name="3V">
@@ -553,15 +551,15 @@ design rules under a new name.</description>
 <contactref element="J5" pad="2"/>
 <contactref element="J5" pad="1"/>
 <contactref element="SPEAKER" pad="3"/>
-<wire x1="20.32" y1="12.7" x2="24.13" y2="40.64" width="0" layer="19" extent="1-1"/>
-<wire x1="11.43" y1="5.08" x2="20.32" y2="12.7" width="0" layer="19" extent="1-1"/>
-<wire x1="8.89" y1="5.08" x2="11.43" y2="5.08" width="0" layer="19" extent="1-1"/>
-<wire x1="11.43" y1="2.54" x2="11.43" y2="5.08" width="0" layer="19" extent="1-1"/>
-<wire x1="6.35" y1="5.08" x2="8.89" y2="5.08" width="0" layer="19" extent="1-1"/>
-<wire x1="8.89" y1="2.54" x2="8.89" y2="5.08" width="0" layer="19" extent="1-1"/>
-<wire x1="3.81" y1="5.08" x2="6.35" y2="5.08" width="0" layer="19" extent="1-1"/>
-<wire x1="6.35" y1="2.54" x2="6.35" y2="5.08" width="0" layer="19" extent="1-1"/>
-<wire x1="3.81" y1="2.54" x2="3.81" y2="5.08" width="0" layer="19" extent="1-1"/>
+<wire x1="19.05" y1="10.16" x2="36.83" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="22.86" y1="38.1" x2="19.05" y2="10.16" width="0" layer="19" extent="1-1"/>
+<wire x1="20.32" y1="38.1" x2="22.86" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="22.86" y1="2.54" x2="22.86" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="17.78" y1="38.1" x2="20.32" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="20.32" y1="2.54" x2="20.32" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="15.24" y1="38.1" x2="17.78" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="17.78" y1="2.54" x2="17.78" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="15.24" y1="2.54" x2="15.24" y2="38.1" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="GND">
 <contactref element="MS1" pad="4"/>
@@ -574,60 +572,85 @@ design rules under a new name.</description>
 <contactref element="GND" pad="2"/>
 <contactref element="GND" pad="1"/>
 <contactref element="SPEAKER" pad="4"/>
-<wire x1="11.43" y1="40.64" x2="26.67" y2="40.64" width="0" layer="19" extent="1-1"/>
-<wire x1="8.89" y1="40.64" x2="11.43" y2="40.64" width="0" layer="19" extent="1-1"/>
-<wire x1="11.43" y1="38.1" x2="11.43" y2="40.64" width="0" layer="19" extent="1-1"/>
-<wire x1="6.35" y1="40.64" x2="8.89" y2="40.64" width="0" layer="19" extent="1-1"/>
-<wire x1="8.89" y1="38.1" x2="8.89" y2="40.64" width="0" layer="19" extent="1-1"/>
-<wire x1="3.81" y1="40.64" x2="6.35" y2="40.64" width="0" layer="19" extent="1-1"/>
-<wire x1="6.35" y1="38.1" x2="6.35" y2="40.64" width="0" layer="19" extent="1-1"/>
-<wire x1="3.81" y1="38.1" x2="3.81" y2="40.64" width="0" layer="19" extent="1-1"/>
-<wire x1="25.4" y1="12.7" x2="26.67" y2="40.64" width="0" layer="19" extent="1-1"/>
+<wire x1="10.16" y1="38.1" x2="39.37" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="7.62" y1="38.1" x2="10.16" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="10.16" y1="2.54" x2="10.16" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="5.08" y1="38.1" x2="7.62" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="7.62" y1="2.54" x2="7.62" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="2.54" y1="38.1" x2="5.08" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="5.08" y1="2.54" x2="5.08" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="2.54" y1="2.54" x2="2.54" y2="38.1" width="0" layer="19" extent="1-1"/>
+<wire x1="24.13" y1="10.16" x2="39.37" y2="38.1" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$1">
 <contactref element="MS1" pad="5"/>
 <contactref element="ANALOGS" pad="1"/>
-<wire x1="27.94" y1="12.7" x2="27.94" y2="5.08" width="0" layer="19" extent="1-1"/>
+<wire x1="26.67" y1="10.16" x2="26.67" y2="2.54" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$2">
 <contactref element="MS1" pad="6"/>
 <contactref element="ANALOGS" pad="2"/>
-<wire x1="30.48" y1="12.7" x2="30.48" y2="5.08" width="0" layer="19" extent="1-1"/>
+<wire x1="29.21" y1="10.16" x2="29.21" y2="2.54" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$3">
 <contactref element="MS1" pad="7"/>
 <contactref element="ANALOGS" pad="3"/>
-<wire x1="33.02" y1="12.7" x2="33.02" y2="5.08" width="0" layer="19" extent="1-1"/>
+<wire x1="31.75" y1="10.16" x2="31.75" y2="2.54" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$4">
 <contactref element="MS1" pad="8"/>
 <contactref element="ANALOGS" pad="4"/>
-<wire x1="35.56" y1="12.7" x2="35.56" y2="5.08" width="0" layer="19" extent="1-1"/>
+<wire x1="34.29" y1="10.16" x2="34.29" y2="2.54" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$5">
 <contactref element="MS1" pad="9"/>
 <contactref element="ANALOGS" pad="5"/>
-<wire x1="38.1" y1="12.7" x2="38.1" y2="5.08" width="0" layer="19" extent="1-1"/>
+<wire x1="36.83" y1="10.16" x2="36.83" y2="2.54" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SOUT">
 <contactref element="SPEAKER" pad="2"/>
 <contactref element="MS1" pad="24"/>
-<wire x1="21.59" y1="40.64" x2="38.1" y2="33.02" width="0" layer="19" extent="1-1"/>
+<wire x1="34.29" y1="38.1" x2="36.83" y2="30.48" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SIN">
 <contactref element="SPEAKER" pad="1"/>
 <contactref element="MS1" pad="25"/>
-<wire x1="19.05" y1="40.64" x2="35.56" y2="33.02" width="0" layer="19" extent="1-1"/>
+<wire x1="31.75" y1="38.1" x2="34.29" y2="30.48" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SDA">
 <contactref element="MS1" pad="17"/>
 <contactref element="ACCEL" pad="3"/>
-<wire x1="3.81" y1="15.24" x2="55.88" y2="33.02" width="0" layer="19" extent="1-1"/>
+<wire x1="46.99" y1="38.1" x2="54.61" y2="30.48" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SCL">
 <contactref element="MS1" pad="18"/>
 <contactref element="ACCEL" pad="4"/>
-<wire x1="3.81" y1="17.78" x2="53.34" y2="33.02" width="0" layer="19" extent="1-1"/>
+<wire x1="44.45" y1="38.1" x2="52.07" y2="30.48" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$6">
+<contactref element="MS1" pad="19"/>
+<contactref element="DIGITAL1" pad="1"/>
+<wire x1="2.54" y1="15.24" x2="49.53" y2="30.48" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$7">
+<contactref element="MS1" pad="20"/>
+<contactref element="DIGITAL1" pad="2"/>
+<wire x1="2.54" y1="17.78" x2="46.99" y2="30.48" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$8">
+<contactref element="MS1" pad="21"/>
+<contactref element="DIGITAL1" pad="3"/>
+<wire x1="2.54" y1="20.32" x2="44.45" y2="30.48" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$9">
+<contactref element="MS1" pad="22"/>
+<contactref element="DIGITAL1" pad="4"/>
+<wire x1="2.54" y1="22.86" x2="41.91" y2="30.48" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$10">
+<contactref element="DIGITAL1" pad="5"/>
+<contactref element="MS1" pad="23"/>
+<wire x1="2.54" y1="25.4" x2="39.37" y2="30.48" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>
 </board>

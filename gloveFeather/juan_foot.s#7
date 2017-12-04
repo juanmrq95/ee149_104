@@ -1801,9 +1801,9 @@ Holes are offset 0.005" from center, locking pins in place during soldering.
 <part name="3V" library="SparkFun-Connectors" deviceset="CONN_04" device=""/>
 <part name="J5" library="SparkFun-Connectors" deviceset="CONN_04" device=""/>
 <part name="ANALOGS" library="SparkFun-Connectors" deviceset="CONN_05" device=""/>
-<part name="DIGITAL" library="SparkFun-Connectors" deviceset="CONN_04" device=""/>
 <part name="ACCEL" library="SparkFun-Connectors" deviceset="CONN_04" device=""/>
 <part name="SPEAKER" library="SparkFun-Connectors" deviceset="CONN_04" device=""/>
+<part name="DIGITAL1" library="SparkFun-Connectors" deviceset="CONN_05" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -1817,9 +1817,9 @@ Holes are offset 0.005" from center, locking pins in place during soldering.
 <instance part="3V" gate="G$1" x="91.44" y="78.74" rot="MR0"/>
 <instance part="J5" gate="G$1" x="93.98" y="60.96" rot="MR0"/>
 <instance part="ANALOGS" gate="G$1" x="60.96" y="25.4" rot="MR0"/>
-<instance part="DIGITAL" gate="G$1" x="-43.18" y="35.56"/>
 <instance part="ACCEL" gate="G$1" x="-43.18" y="55.88"/>
 <instance part="SPEAKER" gate="G$1" x="-43.18" y="12.7"/>
+<instance part="DIGITAL1" gate="G$1" x="-45.72" y="35.56" rot="MR180"/>
 </instances>
 <busses>
 </busses>
@@ -1986,6 +1986,50 @@ Holes are offset 0.005" from center, locking pins in place during soldering.
 <pinref part="ACCEL" gate="G$1" pin="4"/>
 <wire x1="-38.1" y1="60.96" x2="-35.56" y2="60.96" width="0.1524" layer="91"/>
 <label x="-38.1" y="60.96" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="N$6" class="0">
+<segment>
+<pinref part="MS1" gate="G$1" pin="GPIO5"/>
+<wire x1="-38.1" y1="40.64" x2="-38.1" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="-38.1" y1="43.18" x2="-2.54" y2="43.18" width="0.1524" layer="91"/>
+<pinref part="DIGITAL1" gate="G$1" pin="1"/>
+</segment>
+</net>
+<net name="N$7" class="0">
+<segment>
+<wire x1="-38.1" y1="38.1" x2="-35.56" y2="38.1" width="0.1524" layer="91"/>
+<pinref part="MS1" gate="G$1" pin="GPIO6"/>
+<wire x1="-35.56" y1="38.1" x2="-35.56" y2="40.64" width="0.1524" layer="91"/>
+<wire x1="-35.56" y1="40.64" x2="-2.54" y2="40.64" width="0.1524" layer="91"/>
+<pinref part="DIGITAL1" gate="G$1" pin="2"/>
+</segment>
+</net>
+<net name="N$8" class="0">
+<segment>
+<wire x1="-38.1" y1="35.56" x2="-30.48" y2="35.56" width="0.1524" layer="91"/>
+<pinref part="MS1" gate="G$1" pin="GPIO9"/>
+<wire x1="-30.48" y1="35.56" x2="-30.48" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="-30.48" y1="38.1" x2="-2.54" y2="38.1" width="0.1524" layer="91"/>
+<pinref part="DIGITAL1" gate="G$1" pin="3"/>
+</segment>
+</net>
+<net name="N$9" class="0">
+<segment>
+<wire x1="-38.1" y1="33.02" x2="-25.4" y2="33.02" width="0.1524" layer="91"/>
+<pinref part="MS1" gate="G$1" pin="GPIO10"/>
+<wire x1="-25.4" y1="33.02" x2="-25.4" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="-25.4" y1="35.56" x2="-2.54" y2="35.56" width="0.1524" layer="91"/>
+<pinref part="DIGITAL1" gate="G$1" pin="4"/>
+</segment>
+</net>
+<net name="N$10" class="0">
+<segment>
+<pinref part="DIGITAL1" gate="G$1" pin="5"/>
+<wire x1="-38.1" y1="30.48" x2="-20.32" y2="30.48" width="0.1524" layer="91"/>
+<pinref part="MS1" gate="G$1" pin="GPIO11"/>
+<wire x1="-20.32" y1="30.48" x2="-20.32" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="-20.32" y1="33.02" x2="-2.54" y2="33.02" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>

@@ -1988,6 +1988,41 @@ Holes are offset 0.005" from center, locking pins in place during soldering.
 <label x="-38.1" y="60.96" size="1.778" layer="95"/>
 </segment>
 </net>
+<net name="N$6" class="0">
+<segment>
+<pinref part="DIGITAL" gate="G$1" pin="4"/>
+<pinref part="MS1" gate="G$1" pin="GPIO5"/>
+<wire x1="-38.1" y1="40.64" x2="-38.1" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="-38.1" y1="43.18" x2="-2.54" y2="43.18" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$7" class="0">
+<segment>
+<pinref part="MS1" gate="G$1" pin="GPIO6"/>
+<wire x1="-2.54" y1="40.64" x2="-35.56" y2="40.64" width="0.1524" layer="91"/>
+<pinref part="DIGITAL" gate="G$1" pin="3"/>
+<wire x1="-35.56" y1="40.64" x2="-35.56" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="-35.56" y1="38.1" x2="-38.1" y2="38.1" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$8" class="0">
+<segment>
+<pinref part="DIGITAL" gate="G$1" pin="2"/>
+<wire x1="-38.1" y1="35.56" x2="-33.02" y2="35.56" width="0.1524" layer="91"/>
+<pinref part="MS1" gate="G$1" pin="GPIO9"/>
+<wire x1="-33.02" y1="35.56" x2="-33.02" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="-33.02" y1="38.1" x2="-2.54" y2="38.1" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$9" class="0">
+<segment>
+<pinref part="DIGITAL" gate="G$1" pin="1"/>
+<wire x1="-38.1" y1="33.02" x2="-27.94" y2="33.02" width="0.1524" layer="91"/>
+<pinref part="MS1" gate="G$1" pin="GPIO10"/>
+<wire x1="-27.94" y1="33.02" x2="-27.94" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="-27.94" y1="35.56" x2="-2.54" y2="35.56" width="0.1524" layer="91"/>
+</segment>
+</net>
 </nets>
 </sheet>
 </sheets>

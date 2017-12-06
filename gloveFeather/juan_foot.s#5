@@ -3983,6 +3983,7 @@ http://www.xganon.com</description>
 <sheets>
 <sheet>
 <plain>
+<text x="-55.88" y="60.96" size="1.778" layer="91">switch ground and 3v (LR)</text>
 </plain>
 <instances>
 <instance part="GROUND" gate="G$1" x="-119.38" y="119.38"/>

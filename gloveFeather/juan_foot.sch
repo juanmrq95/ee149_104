@@ -4545,13 +4545,6 @@ http://www.xganon.com</description>
 <label x="-93.98" y="99.06" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$9" class="0">
-<segment>
-<pinref part="U$1" gate="G$1" pin="GND2"/>
-<wire x1="35.56" y1="22.86" x2="40.64" y2="22.86" width="0.1524" layer="91"/>
-<label x="38.1" y="22.86" size="1.778" layer="95"/>
-</segment>
-</net>
 <net name="SRX" class="0">
 <segment>
 <pinref part="U$1" gate="G$1" pin="D6"/>

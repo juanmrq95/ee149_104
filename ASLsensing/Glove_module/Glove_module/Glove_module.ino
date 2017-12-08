@@ -1,24 +1,21 @@
-/*
-Heart Rate SENSOR (Week 8)
-  Use the "serial monitor" window to read EMG sensor.
- 
-  The BrainBox is an easy-to-use EMG that outputs
-  a voltage that's proportional to your muscle activity.
- 
-  This script will use the Arduino's serial port
-  to send data back to your main computer.
- 
-Hardware connections:
-  Be careful when installing the EMG wires from the BrainBox into the Arduino.
- 
-  Connect the red wire from the BrainBox to 5 Volts (5V) on the Arduino.
-  Connect the white wire from the BrainBox to ANALOG pin 0 on the Arduino.
-  Connect the black wire to ground (GND) on the Arduino.
-This sketch was written by Professor Grace O'Connell and modifyied from Ardu. Copyright, 2016.
-*/
+#include <Wire.h>
 
-// We'll use analog input 0 to measure the temperature sensor's
-// signal pin.
+#include <FreeSixIMU.h>
+#include <FIMU_ADXL345.h>
+#include <FIMU_ITG3200.h>
+
+//////////////////////////////////////////////////////
+// Accelerometer and Gyroscope Input Initialization //
+//////////////////////////////////////////////////////
+float angles[3]; // yaw pitch roll
+
+
+// Set the FreeSixIMU object
+FreeSixIMU sixDOF = FreeSixIMU();
+
+///////////////////////////////
+// Flex Input Initialization //
+///////////////////////////////
 
 const int thumb = 2;
 const int indexes = 1;
@@ -26,17 +23,43 @@ const int middle = 0;
 const int ring = 6;
 const int pinky = 7;
 
+float thumbValue;
+float indexValue;
+float middleValue;
+float ringValue;
+float pinkyValue;
 
-  float thumbValue;
-  float indexValue;
-  float middleValue;
-  float ringValue;
-  float pinkyValue;
+////////////////////////////////
+// Touch Input Initialization //
+////////////////////////////////
 
-  float data[5];
-  float prev_data[5];
+const int ringSideTouch = 9;
+const int middleTipTouch = 13;
+const int middleBTouch = 10;
+const int middleSideTouch = 11;
+const int indexTipTouch = 12;
+const int indexSideTouch = 17;
+const int pinkySideTouch = 2;
 
-  //char ltr;
+int  indexSideValue;
+int  indexTipValue;
+int  middleSideValue;
+int  middleBValue;
+int  middleTipValue;
+int  ringSideValue;
+int  pinkySideValue;
+
+////////////////////////////////////
+//Feedback variable initialization//
+////////////////////////////////////
+
+float data[5];
+float prev_data[5];
+
+//////////////////////////////
+//Glove State Initialization//
+//////////////////////////////
+ 
 typedef enum{
   INITIAL,
   CLASSIFY_MOVING, 
@@ -51,18 +74,11 @@ typedef enum{
   
 } gloveState;
 
+/////////////////////
+//Feedback Function//
+/////////////////////
 
-void setup()
-{
-  // The speed is measured in bits per second, also known as
-  // "baud rate". 9600 is a very commonly used baud rate,
-  // and will transfer about 10 characters per second.
- 
-  Serial.begin(9600);
-}
-
-
-void update_data()
+void update_data(void)
 {
   prev_data[0] = data[0];
   prev_data[1] = data[1];
@@ -71,8 +87,11 @@ void update_data()
   prev_data[4] = data[4];
 }
 
+//////////////////////////////
+//Glove Calibration Function//
+//////////////////////////////
 
-void calibrate()
+void calibrate(void)
 {
   update_data();
  
@@ -87,6 +106,17 @@ void calibrate()
   middleValue = (int) (( middleValue  - 210) / 12.5);
   ringValue = (int) ((ringValue - 200) / 10);
   pinkyValue = (int) ((pinkyValue - 470) / 14.5);
+
+  indexSideValue = digitalRead(indexSideTouch);
+  indexTipValue = digitalRead(indexTipTouch);
+  middleSideValue = digitalRead(middleSideTouch);
+  middleBValue = digitalRead(middleBTouch);
+  middleTipValue = digitalRead(middleTipTouch);
+  ringSideValue = digitalRead(ringSideTouch);
+  pinkySideValue = digitalRead(pinkySideTouch);
+
+  sixDOF.getEuler(angles);
+  
  /*
   if (thumbValue >= 0 && thumbValue < 8)
   {
@@ -163,7 +193,7 @@ void calibrate()
 }
 
 
-int array_equal()
+int array_equal(void)
 {
   if(data[0] == prev_data[0]
   && data[1] == prev_data[1]
@@ -180,7 +210,7 @@ int array_equal()
 }
 
 
-int check_movement()
+int check_movement(void)
 {
   if (array_equal() == 1)
   {
@@ -192,140 +222,10 @@ int check_movement()
   }
 }
 
-
-void loop()
+void classifier(char *ltr)
 {
-  static gloveState state = INITIAL;
-  static int classify = 0;
-  static int edit = 0;
-  static char ltr;
-
-
-  /*if( !check_movement())
-  {
-   return;
-  }
-  */
-
- if(state == INITIAL && check_movement()){
-    state = INITIAL;
-  }
-   
- if(state == INITIAL && !check_movement()){
-    state = CLASSIFY_MOVING;
-  }
-
-  else if(state == CLASSIFY_MOVING && check_movement()){
-    state = CLASSIFY;
-  }
-  
-  else if(state == CLASSIFY_MOVING && !check_movement()){
-    state = CLASSIFY_MOVING;
-  }
-  
-  else if(state == CLASSIFY && classify==1 && check_movement()){
-    state = CLASSIFY_PRINT;
-  }
-
-  
-  else if(state == CLASSIFY && classify== 0 && check_movement()){
-    state = CLASSIFY_MOVING;
-  }
-
-  else if(state == CLASSIFY && classify== 2 && check_movement()){
-    state = EDIT;
-  }
-  
-  else if(state == CLASSIFY_PRINT){
-    state = CLASSIFY_WAIT;
-  }
-  
-  else if(state == CLASSIFY_WAIT && check_movement()){
-    state = CLASSIFY_WAIT;
-  }
-  
-  else if(state == CLASSIFY_WAIT && !check_movement()){
-    state = CLASSIFY_MOVING;
-  }
-
-  else if(state == EDIT && check_movement()){
-    state = EDIT;
-  }
-
-  else if(state == EDIT && !check_movement()){
-    state = EDIT_MOVING;
-  }
-
-  else if(state == EDIT_MOVING && check_movement()){
-    state = EDIT_CLASSIFY;
-  }
-
-  else if(state == CLASSIFY && edit == 1 && check_movement()){
-    state = EDIT_EXECUTE;
-  }
-  
-  else if(state == CLASSIFY && edit == 0 && check_movement()){
-    state = EDIT_MOVING;
-  }
-
-  else if(state == CLASSIFY && edit == 2 && check_movement()){
-    state = CLASSIFY_MOVING;
-  }
-  
-
-  else if(state == EDIT_MOVING && !check_movement()){
-    state = EDIT_MOVING;
-  }  
-
-  else if(state == EDIT_EXECUTE){
-    state = EDIT_WAIT;
-  }  
-
-  else if(state == EDIT_WAIT && check_movement()){
-    state = EDIT_WAIT;
-  }
-
-  else if(state == EDIT_WAIT && !check_movement()){
-    state = EDIT_MOVING;
-  }
-  
-  switch (state){
-    case INITIAL:
-    case CLASSIFY_MOVING:
-    case CLASSIFY_WAIT:
-           Serial.print(thumbValue);
-  Serial.print("   index: ");
-  Serial.print(indexValue);
-  Serial.print("   middle: ");
-  Serial.print(middleValue);
-  Serial.print("   ring: ");
-  Serial.print(ringValue);
-  Serial.print("   pinky: ");
-  Serial.println(pinkyValue);
-  Serial.println(state);
-
-            calibrate();
-
-            
-            classify = 0;
-            //Serial.println(state);
-            break;
-  
-    case CLASSIFY:
-     calibrate();
-      /*Serial.print("   index: ");
-  Serial.print(indexValue);
-  Serial.print("   middle: ");
-  Serial.print(middleValue);
-  Serial.print("   ring: ");
-  Serial.print(ringValue);
-  Serial.print("   pinky: ");
-  Serial.println(pinkyValue);
-  Serial.println(state);
-               Serial.println(state);
- */
-   // Serial.println(state);
-  // H
+  static int classify = 0; 
+   // H
   if(data[0] == 0
   && data[1] == 0
   && data[2] == 0
@@ -448,6 +348,194 @@ void loop()
    classify = 1;
   }
   classify =1;
+  
+}
+
+void setup()
+{
+  //Serial USB setup
+   
+  Serial.begin(115200);
+
+  //GPIO pin initialization
+  
+  pinMode(ringSideTouch, INPUT);
+  pinMode(middleTipTouch, INPUT);
+  pinMode(middleBTouch, INPUT);
+  pinMode(middleSideTouch, INPUT);
+  pinMode(indexTipTouch, INPUT);
+  pinMode(indexSideTouch, INPUT);
+  pinMode(pinkySideTouch, INPUT);
+
+  //I2C pins setup
+  
+  Wire.begin();
+  
+  //Accelerometer and Gyroscope Setup
+  
+  delay(5);
+  sixDOF.init(); //begin the IMU
+  delay(5); 
+
+}
+
+
+
+void loop()
+{
+  static gloveState state = INITIAL;
+  static int classify = 0;
+  static int edit = 0;
+  static char ltr;
+
+
+  /*if( !check_movement())
+  {
+   return;
+  }
+  */
+
+ if(state == INITIAL && check_movement()){
+    state = INITIAL;
+  }
+   
+ if(state == INITIAL && !check_movement()){
+    state = CLASSIFY_MOVING;
+  }
+
+  else if(state == CLASSIFY_MOVING && check_movement()){
+    state = CLASSIFY;
+  }
+  
+  else if(state == CLASSIFY_MOVING && !check_movement()){
+    state = CLASSIFY_MOVING;
+  }
+  
+  else if(state == CLASSIFY && classify==1 && check_movement()){
+    state = CLASSIFY_PRINT;
+  }
+
+  
+  else if(state == CLASSIFY && classify== 0 && check_movement()){
+    state = CLASSIFY_MOVING;
+  }
+
+  else if(state == CLASSIFY && classify== 2 && check_movement()){
+    state = EDIT;
+  }
+  
+  else if(state == CLASSIFY_PRINT){
+    state = CLASSIFY_WAIT;
+  }
+  
+  else if(state == CLASSIFY_WAIT && check_movement()){
+    state = CLASSIFY_WAIT;
+  }
+  
+  else if(state == CLASSIFY_WAIT && !check_movement()){
+    state = CLASSIFY_MOVING;
+  }
+
+  else if(state == EDIT && check_movement()){
+    state = EDIT;
+  }
+
+  else if(state == EDIT && !check_movement()){
+    state = EDIT_MOVING;
+  }
+
+  else if(state == EDIT_MOVING && check_movement()){
+    state = EDIT_CLASSIFY;
+  }
+
+  else if(state == CLASSIFY && edit == 1 && check_movement()){
+    state = EDIT_EXECUTE;
+  }
+  
+  else if(state == CLASSIFY && edit == 0 && check_movement()){
+    state = EDIT_MOVING;
+  }
+
+  else if(state == CLASSIFY && edit == 2 && check_movement()){
+    state = CLASSIFY_MOVING;
+  }
+  
+
+  else if(state == EDIT_MOVING && !check_movement()){
+    state = EDIT_MOVING;
+  }  
+
+  else if(state == EDIT_EXECUTE){
+    state = EDIT_WAIT;
+  }  
+
+  else if(state == EDIT_WAIT && check_movement()){
+    state = EDIT_WAIT;
+  }
+
+  else if(state == EDIT_WAIT && !check_movement()){
+    state = EDIT_MOVING;
+  }
+  
+  switch (state){
+    case INITIAL:
+    case CLASSIFY_MOVING:
+    case CLASSIFY_WAIT:
+           Serial.print(thumbValue);
+  Serial.print("   index: ");
+  Serial.print(indexValue);
+  Serial.print("   middle: ");
+  Serial.print(middleValue);
+  Serial.print("   ring: ");
+  Serial.print(ringValue);
+  Serial.print("   pinky: ");
+  Serial.println(pinkyValue);
+  Serial.print("AccelX: ");
+  Serial.print(angles[0]);
+  Serial.print("   AccelY: ");
+  Serial.print(angles[1]);
+  Serial.print("   AccelZ: ");
+  Serial.println(angles[2]);
+   Serial.print("ring_side ");
+  Serial.print(digitalRead(ringSideTouch));
+  Serial.print("   middle_tip: ");
+  Serial.print(digitalRead(middleTipTouch));
+  Serial.print("   middle_b: ");
+  Serial.print(digitalRead(middleBTouch));
+  Serial.print("   middle_side: ");
+  Serial.print(digitalRead(middleSideTouch));
+  Serial.print("   index_tip: ");
+  Serial.print(digitalRead(indexTipTouch));
+  Serial.print("   index_side: ");
+  Serial.print(digitalRead(indexSideTouch));
+  Serial.print("   pinky_side: ");
+  Serial.println(digitalRead(pinkySideTouch));
+  
+  Serial.println(state);
+
+            calibrate();
+
+            
+            classify = 0;
+            //Serial.println(state);
+            break;
+  
+    case CLASSIFY:
+     calibrate();
+      /*Serial.print("   index: ");
+  Serial.print(indexValue);
+  Serial.print("   middle: ");
+  Serial.print(middleValue);
+  Serial.print("   ring: ");
+  Serial.print(ringValue);
+  Serial.print("   pinky: ");
+  Serial.println(pinkyValue);
+  Serial.println(state);
+               Serial.println(state);
+ */
+   // Serial.println(state);
+
+   classifier(ltr);
    break;
 
   case CLASSIFY_PRINT:

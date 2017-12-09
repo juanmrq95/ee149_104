@@ -9,9 +9,9 @@ void setup()
  // String portName = Serial.list()[4]; 
   //change the 0 to a 1 or 2 etc. to match your port
   myPort = new Serial(this, "COM17", 9600); 
-  output = createWriter("testAashykLetterA.txt");
+  output = createWriter("testOscarLetterZ.txt");
 }
-   
+     
 void draw()
 {
   if ( myPort.available() > 0) 

@@ -38,19 +38,19 @@ void loop() {
   Serial.write('h');
   delay(250);
   emicSerial.write('e');
-  Serial.write('h');
+  Serial.write('e');
   delay(250);
   emicSerial.write('l');
-  Serial.write('h');
+  Serial.write('l');
   delay(250);
   emicSerial.write('l');
-  Serial.write('h');
+  Serial.write('l');
   delay(250);
   emicSerial.write('o');
-  Serial.write('h');
+  Serial.write('o');
   delay(250);
   emicSerial.write('.');
-  Serial.write('h');
+  Serial.write('.');
   delay(250);
 
 }

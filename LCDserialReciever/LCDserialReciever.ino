@@ -1,12 +1,13 @@
+/* This code runs on Arduino UNO:
+Recieves data through serial pins and then displays to the lcd screen" */
+
 char incomingByte ; //Initialized variable to store recieved data
 #include <Wire.h>
 #include "rgb_lcd.h"
 
 #include <SoftwareSerial.h>
 
-
 rgb_lcd lcd;
-
 
 const int colorR = 255;
 const int colorG = 255;
@@ -40,15 +41,15 @@ void loop() {
         Serial.print("I received: ");
         Serial.println(incomingByte);
         
-        static int a = 0;
-        lcd.setCursor(a, 0);
+        static int curs = 0;
+        lcd.setCursor(curs, 0);
         delay(100);
         // print the number of seconds since reset:
         //lcd.print(millis()/1000);
         lcd.print(incomingByte);
         delay(150);
        //delay(250);
-        a++;
+        curs++;
       }
     }
 }

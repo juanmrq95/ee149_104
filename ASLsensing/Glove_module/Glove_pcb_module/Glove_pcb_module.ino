@@ -1,53 +1,63 @@
+
+
 #include <Wire.h>
 
 #include <FreeSixIMU.h>
 #include <FIMU_ADXL345.h>
 #include <FIMU_ITG3200.h>
 
-//////////////////////////////////////////////////////
-// Accelerometer and Gyroscope Input Initialization //
-//////////////////////////////////////////////////////
 float angles[3]; // yaw pitch roll
 
+/////////////////////
+// Glove constants //
+/////////////////////
 
 // Set the FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();
 
-///////////////////////////////
-// Flex Input Initialization //
-///////////////////////////////
+
+int ring_side = 8;
+int middle_tip = 13;
+int middle_b = 9;
+int middle_side = 10;
+int index_tip = 11;
+int index_side = 17;
+int pinky_side = 12;
+
 
 const int thumb = 2;
-const int indexes = 1;
+const int index = 1;
 const int middle = 0;
 const int ring = 6;
 const int pinky = 7;
 
-float thumbValue;
-float indexValue;
-float middleValue;
-float ringValue;
-float pinkyValue;
 
-////////////////////////////////
-// Touch Input Initialization //
-////////////////////////////////
+int thumb_value = 0;
+int index_value = 0;
+int middle_value = 0;
+int ring_value = 0;
+int pinky_value = 0;
 
-const int ringSideTouch = 9;
-const int middleTipTouch = 13;
-const int middleBTouch = 10;
-const int middleSideTouch = 11;
-const int indexTipTouch = 12;
-const int indexSideTouch = 17;
-const int pinkySideTouch = 2;
+float thumb_flex_voltage;
+float index_flex_voltage;
+float middle_flex_voltage;
+float ring_flex_voltage;
+float pinky_flex_voltage;
 
-int  indexSideValue;
-int  indexTipValue;
-int  middleSideValue;
-int  middleBValue;
-int  middleTipValue;
-int  ringSideValue;
-int  pinkySideValue;
+const int thumbBias = 260;
+const int thumb_a = 8;
+
+const int indexBias = 200;
+const int index_a = 8;
+
+const int middleBias = 200;
+const int middle_a = 10.5;
+
+const int ringBias = 200;
+const int ring_a = 11.5;
+
+const int pinkyBias = 410;
+const int pinky_a = 10;
 
 ////////////////////////////////////
 //Feedback variable initialization//
@@ -87,110 +97,115 @@ void update_data(void)
   prev_data[4] = data[4];
 }
 
-//////////////////////////////
-//Glove Calibration Function//
-//////////////////////////////
+////////////////////////////////////
+//Flex sensor Calibration Function//
+////////////////////////////////////
 
 void calibrate(void)
 {
   update_data();
- 
-  thumbValue = getVoltage(thumb);
-  indexValue = getVoltage(indexes);
-  middleValue = getVoltage(middle);
-  ringValue = getVoltage(ring);
-  pinkyValue = getVoltage(pinky);
 
-  thumbValue = (int) ((thumbValue - 230) / 16 );
-  indexValue = (int) ((indexValue - 220) / 11.5);
-  middleValue = (int) (( middleValue  - 210) / 12.5);
-  ringValue = (int) ((ringValue - 200) / 10);
-  pinkyValue = (int) ((pinkyValue - 470) / 14.5);
+  thumb_flex_voltage = getVoltage(thumb);
+  index_flex_voltage = getVoltage(index);
+  middle_flex_voltage = getVoltage(middle);
+  ring_flex_voltage = getVoltage(ring);
+  pinky_flex_voltage = getVoltage(pinky);
 
-  indexSideValue = digitalRead(indexSideTouch);
-  indexTipValue = digitalRead(indexTipTouch);
-  middleSideValue = digitalRead(middleSideTouch);
-  middleBValue = digitalRead(middleBTouch);
-  middleTipValue = digitalRead(middleTipTouch);
-  ringSideValue = digitalRead(ringSideTouch);
-  pinkySideValue = digitalRead(pinkySideTouch);
+  thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
+  index_value = (index_flex_voltage - indexBias)/index_a;
+  middle_value = (middle_flex_voltage - middleBias)/middle_a;
+  ring_value = (ring_flex_voltage - ringBias)/ring_a;
+  pinky_value = (pinky_flex_voltage - pinkyBias)/pinky_a;
 
-  sixDOF.getEuler(angles);
   
- /*
-  if (thumbValue >= 0 && thumbValue < 8)
+/* *Note* getAngles function should not be in calibration but in classify state since state transition depends only on flex movement */
+  sixDOF.getAngles(angles);
+
+
+/* *Note* the following flex sensor custom range code were used for testing purposes. 
+    Stuff to be done here : 1) Keep using the custom range code for flex values by fine tuning the range
+                       (or) 2) Use a moving average or low pass filter for the flex values 
+                       (or) 3) Both if it provides with stable flex values
+*/
+
+//Thumb finger 
+   if (thumb_value >= 0 && thumb_value < 7)
   {
-    thumbValue = 0;
+    thumb_value = 0;
   }
-  else if (thumbValue >= 8 && thumbValue < 13)
+  else if (thumb_value >= 7 && thumb_value < 15)
   {
-    thumbValue = 1;
+    thumb_value = 1;
   }
-  else if (thumbValue >= 13)
+  else if (thumb_value >= 15)
   {
-    thumbValue = 2;
+    thumb_value = 2;
   }
 //index finger
-  if (indexValue >= 0 && indexValue < 10)
+  if (index_value >= 0 && index_value < 7)
   {
-    indexValue = 0;
+    index_value = 0;
   }
-  else if (indexValue >= 10 && indexValue < 15)
+  else if (index_value >= 7 && index_value < 15)
   {
-    indexValue = 1;
+    index_value = 1;
   }
-  else if (indexValue >= 15)
+  else if (index_value >= 15)
   {
-    indexValue = 2;
+    index_value = 2;
   }
 //middle finger
-  if (middleValue >= 0 && middleValue < 7)
+  if (middle_value >= 0 && middle_value < 7)
   {
-    middleValue = 0;
+    middle_value = 0;
   }
-  else if (middleValue >= 7 && middleValue < 10)
+  else if (middle_value >= 7 && middle_value < 15)
   {
-    middleValue = 1;
+    middle_value = 1;
   }
-  else if (middleValue >= 10)
+  else if (middle_value >= 15)
   {
-    middleValue = 2;
+    middle_value = 2;
   }
 //ring finger
-    if (ringValue >= 0 && ringValue < 10)
+    if (ring_value >= 0 && ring_value < 7)
   {
-    ringValue = 0;
+    ring_value = 0;
   }
-  else if (ringValue >= 10 && ringValue < 13)
+  else if (ring_value >= 7 && ring_value < 15)
   {
-    ringValue = 1;
+    ring_value = 1;
   }
-  else if (ringValue >= 13)
+  else if (ring_value >= 15)
   {
-    ringValue = 2;
+    ring_value = 2;
   }
 //pinky finger
-    if (pinkyValue >= 0 && pinkyValue < 7)
+    if (pinky_value >= 0 && pinky_value < 7)
   {
-    pinkyValue = 0;
+    pinky_value = 0;
   }
-  else if (pinkyValue >= 7 && pinkyValue < 10)
+  else if (pinky_value >= 7 && pinky_value < 15)
   {
-    pinkyValue = 1;
+    pinky_value = 1;
   }
-  else if (pinkyValue >= 10)
+  else if (pinky_value >= 15)
   {
-    pinkyValue = 2;
+    pinky_value = 2;
   }
-*/
-  data[0] = thumbValue;
-  data[1] = indexValue;
-  data[2] =  middleValue;
-  data[3] =  ringValue;
-  data[4] =  pinkyValue;
+
+/* Custom range code ends here */
+
+
+  data[0] = thumb_value;
+  data[1] = index_value;
+  data[2] =  middle_value;
+  data[3] =  ring_value;
+  data[4] =  pinky_value;
 
 
 }
+
 
 
 int array_equal(void)
@@ -355,18 +370,16 @@ void setup()
 {
   //Serial USB setup
    
-  Serial.begin(115200);
+  Serial.begin(500000);
 
   //GPIO pin initialization
-  
-  pinMode(ringSideTouch, INPUT);
-  pinMode(middleTipTouch, INPUT);
-  pinMode(middleBTouch, INPUT);
-  pinMode(middleSideTouch, INPUT);
-  pinMode(indexTipTouch, INPUT);
-  pinMode(indexSideTouch, INPUT);
-  pinMode(pinkySideTouch, INPUT);
-
+   pinMode(ring_side, INPUT);
+  pinMode(middle_tip, INPUT);
+  pinMode(middle_b, INPUT);
+  pinMode(middle_side, INPUT);
+  pinMode(index_tip, INPUT);
+  pinMode(index_side, INPUT);
+  pinMode(pinky_side, INPUT);
   //I2C pins setup
   
   Wire.begin();
@@ -384,20 +397,11 @@ void setup()
 void loop()
 {
 
-  thumb_flex_voltage = getVoltage(thumb);
-  index_flex_voltage = getVoltage(index);
-  middle_flex_voltage = getVoltage(middle);
-  ring_flex_voltage = getVoltage(ring);
-  pinky_flex_voltage = getVoltage(pinky);
-
-  thumb_value = (thumb_flex_voltage - thumbBias)/thumb_a;
-  index_value = (index_flex_voltage - indexBias)/index_a;
-  middle_value = (middle_flex_voltage - middleBias)/middle_a;
-  ring_value = (ring_flex_voltage - ringBias)/ring_a;
-  pinky_value = (pinky_flex_voltage - pinkyBias)/pinky_a;
-
-  
-  sixDOF.getAngles(angles);
+  //Code to check if check movement function and feedback works
+  /*
+  static int a = 0;
+    
+  calibrate();
   
   Serial.print("r_side ");
   Serial.print(digitalRead(ring_side));
@@ -431,14 +435,23 @@ void loop()
   Serial.print(angles[1]);
   Serial.print("  Z: ");
   Serial.println(angles[2]);
-  /*static gloveState state = INITIAL;
+
+  a = check_movement();
+
+  if (a==0){
+    Serial.println("YES");
+  }
+
+  */
+  static gloveState state = INITIAL;
   static int classify = 0;
   static int edit = 0;
   static char ltr;
 
+  
 
 
-/*
+
  if(state == INITIAL && check_movement()){
     state = INITIAL;
   }
@@ -455,16 +468,20 @@ void loop()
     state = CLASSIFY_MOVING;
   }
   
-  else if(state == CLASSIFY && classify==1 && check_movement()){
+  else if(state == CLASSIFY && classify == 1 && check_movement()){
     state = CLASSIFY_PRINT;
   }
 
   
-  else if(state == CLASSIFY && classify== 0 && check_movement()){
+  else if(state == CLASSIFY && classify == 0 && check_movement()){
     state = CLASSIFY_MOVING;
   }
 
-  else if(state == CLASSIFY && classify== 2 && check_movement()){
+  else if(state == CLASSIFY && classify == 2 && check_movement()){
+    state = EDIT;
+  }
+
+   else if(state == CLASSIFY && classify == 2 && !check_movement()){
     state = EDIT;
   }
   
@@ -481,7 +498,7 @@ void loop()
   }
 
   else if(state == EDIT && check_movement()){
-    state = EDIT;
+    state = EDIT_MOVING;
   }
 
   else if(state == EDIT && !check_movement()){
@@ -492,15 +509,15 @@ void loop()
     state = EDIT_CLASSIFY;
   }
 
-  else if(state == CLASSIFY && edit == 1 && check_movement()){
+  else if(state == EDIT_CLASSIFY && edit == 1 && check_movement()){
     state = EDIT_EXECUTE;
   }
   
-  else if(state == CLASSIFY && edit == 0 && check_movement()){
+  else if(state == EDIT_CLASSIFY && edit == 0 && check_movement()){
     state = EDIT_MOVING;
   }
 
-  else if(state == CLASSIFY && edit == 2 && check_movement()){
+  else if(state == EDIT_CLASSIFY && edit == 2 && check_movement()){
     state = CLASSIFY_MOVING;
   }
   
@@ -525,58 +542,42 @@ void loop()
     case INITIAL:
     case CLASSIFY_MOVING:
     case CLASSIFY_WAIT:
-           Serial.print(thumbValue);
-  Serial.print("   index: ");
-  Serial.print(indexValue);
-  Serial.print("   middle: ");
-  Serial.print(middleValue);
-  Serial.print("   ring: ");
-  Serial.print(ringValue);
-  Serial.print("   pinky: ");
-  Serial.println(pinkyValue);
-  Serial.print("AccelX: ");
-  Serial.print(angles[0]);
-  Serial.print("   AccelY: ");
-  Serial.print(angles[1]);
-  Serial.print("   AccelZ: ");
-  Serial.println(angles[2]);
-   Serial.print("ring_side ");
-  Serial.print(digitalRead(ringSideTouch));
-  Serial.print("   middle_tip: ");
-  Serial.print(digitalRead(middleTipTouch));
-  Serial.print("   middle_b: ");
-  Serial.print(digitalRead(middleBTouch));
-  Serial.print("   middle_side: ");
-  Serial.print(digitalRead(middleSideTouch));
-  Serial.print("   index_tip: ");
-  Serial.print(digitalRead(indexTipTouch));
-  Serial.print("   index_side: ");
-  Serial.print(digitalRead(indexSideTouch));
-  Serial.print("   pinky_side: ");
-  Serial.println(digitalRead(pinkySideTouch));
-  
-  Serial.println(state);
 
             calibrate();
-
-            
             classify = 0;
-            //Serial.println(state);
+            Serial.println(state);
             break;
-  
+            
+    case EDIT_CLASSIFY:  
     case CLASSIFY:
      calibrate();
-      
-   // Serial.println(state);
+     if(data[3] == 2){
+      classify = 2;
+      edit = 2;
+     }
+     else
+     {
+      classify = 1;
+      edit = 1;
+     }
+   Serial.println(state);
 
    classifier(ltr);
    break;
 
   case CLASSIFY_PRINT:
-  //Serial.println(state);
+  Serial.println(state);
   Serial.print(ltr);
   break;
 
+  case EDIT:
+  case EDIT_MOVING:
+  
+  case EDIT_EXECUTE:
+  case EDIT_WAIT:
+  calibrate();
+  Serial.println(state);
+  break;
   
 
   
@@ -592,10 +593,10 @@ void loop()
   // Note that the above statement uses "println", which will insert
   // a "carriage return" character at the end of whatever it prints,
   // moving down to the NEXT line.
-  */
+
 
   
- delay(150); // repeat once per second (change as you wish!)
+ delay(250); // repeat once per second (change as you wish!)
 }
 
 

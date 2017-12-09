@@ -1,3 +1,11 @@
+/* Code functional description goes here
+ *  
+ *  
+ *  
+ */
+
+
+
 #include <Wire.h>
 
 #include <FreeSixIMU.h>
@@ -6,17 +14,23 @@
 
 float angles[3]; // yaw pitch roll
 
+////////////////////////////
+// Glove global constants //
+////////////////////////////
+
+int ms = 250; //250 ms: current delay
+
 // Set the FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();
 
 
-int ring_side = 9;
+int ring_side = 8;
 int middle_tip = 13;
-int middle_b = 10;
-int middle_side = 11;
-int index_tip = 12;
+int middle_b = 9;
+int middle_side = 10;
+int index_tip = 11;
 int index_side = 17;
-int pinky_side = 2;
+int pinky_side = 12;
 
 
 const int thumb = 2;
@@ -59,7 +73,7 @@ const int pinky_a = 10;
 
 float data[5];
 float prev_data[5];
-/*
+
 //////////////////////////////
 //Glove State Initialization//
 //////////////////////////////
@@ -77,7 +91,7 @@ typedef enum{
   EDIT_WAIT
   
 } gloveState;
-*/
+
 /////////////////////
 //Feedback Function//
 /////////////////////
@@ -91,9 +105,9 @@ void update_data(void)
   prev_data[4] = data[4];
 }
 
-//////////////////////////////
-//Glove Calibration Function//
-//////////////////////////////
+////////////////////////////////////
+//Flex sensor Calibration Function//
+////////////////////////////////////
 
 void calibrate(void)
 {
@@ -112,27 +126,35 @@ void calibrate(void)
   pinky_value = (pinky_flex_voltage - pinkyBias)/pinky_a;
 
   
-
+/* *Note* getAngles function should not be in calibration but in classify state since state transition depends only on flex movement */
   sixDOF.getAngles(angles);
-  
-   if (thumb_value >= 0 && thumb_value < 8)
+
+
+/* *Note* the following flex sensor custom range code were used for testing purposes. 
+    Stuff to be done here : 1) Keep using the custom range code for flex values by fine tuning the range
+                       (or) 2) Use a moving average or low pass filter for the flex values 
+                       (or) 3) Both if it provides with stable flex values
+*/
+
+//Thumb finger 
+   if (thumb_value >= 0 && thumb_value < 7)
   {
     thumb_value = 0;
   }
-  else if (thumb_value >= 8 && thumb_value < 13)
+  else if (thumb_value >= 7 && thumb_value < 15)
   {
     thumb_value = 1;
   }
-  else if (thumb_value >= 13)
+  else if (thumb_value >= 15)
   {
     thumb_value = 2;
   }
 //index finger
-  if (index_value >= 0 && index_value < 10)
+  if (index_value >= 0 && index_value < 7)
   {
     index_value = 0;
   }
-  else if (index_value >= 10 && index_value < 15)
+  else if (index_value >= 7 && index_value < 15)
   {
     index_value = 1;
   }
@@ -145,24 +167,24 @@ void calibrate(void)
   {
     middle_value = 0;
   }
-  else if (middle_value >= 7 && middle_value < 10)
+  else if (middle_value >= 7 && middle_value < 15)
   {
     middle_value = 1;
   }
-  else if (middle_value >= 10)
+  else if (middle_value >= 15)
   {
     middle_value = 2;
   }
 //ring finger
-    if (ring_value >= 0 && ring_value < 10)
+    if (ring_value >= 0 && ring_value < 7)
   {
     ring_value = 0;
   }
-  else if (ring_value >= 10 && ring_value < 13)
+  else if (ring_value >= 7 && ring_value < 15)
   {
     ring_value = 1;
   }
-  else if (ring_value >= 13)
+  else if (ring_value >= 15)
   {
     ring_value = 2;
   }
@@ -171,25 +193,29 @@ void calibrate(void)
   {
     pinky_value = 0;
   }
-  else if (pinky_value >= 7 && pinky_value < 10)
+  else if (pinky_value >= 7 && pinky_value < 15)
   {
     pinky_value = 1;
   }
-  else if (pinky_value >= 10)
+  else if (pinky_value >= 15)
   {
     pinky_value = 2;
   }
 
-/*
+/* Custom range code ends here */
+
+// Feedback array *Note* Not sure if this should have its own function; might be helpful
   data[0] = thumb_value;
   data[1] = index_value;
-  data[2] =  middle_value;
-  data[3] =  ring_value;
-  data[4] =  pinky_value;
-*/
+  data[2] = middle_value;
+  data[3] = ring_value;
+  data[4] = pinky_value;
+
 
 }
-
+////////////////////////
+// Feedback functions //
+////////////////////////
 
 int array_equal(void)
 {
@@ -219,6 +245,11 @@ int check_movement(void)
     return 0;
   }
 }
+
+/////////////////////////////////////////////////////////////////
+// ASL Classifier function & possibly Edit Classifier function //
+/////////////////////////////////////////////////////////////////
+
 
 void classifier(char *ltr)
 {
@@ -349,6 +380,31 @@ void classifier(char *ltr)
   
 }
 
+/*Edit function classifer goes here
+
+*/
+
+///////////////////////
+// ADC read function //
+///////////////////////
+
+float getVoltage(int pin)
+{
+  // This function has one input parameter, the analog pin number
+  // to read. You might notice that this function does not have
+  // "void" in front of it; this is because it returns a floating-
+  // point value, which is the true voltage on that pin (0 to 5V).
+
+  // Here's the return statement for this function. We're doing
+  // all the math we need to do within this statement:
+  return (analogRead(pin));
+ 
+}
+
+////////////////
+// Setup Code //
+////////////////
+
 void setup()
 {
   //Serial USB setup
@@ -375,10 +431,15 @@ void setup()
 
 }
 
-
+///////////////
+// Loop code //
+///////////////
 
 void loop()
 {
+
+  //Code to check if check movement function and feedback works
+  /*
   static int a = 0;
     
   calibrate();
@@ -422,8 +483,10 @@ void loop()
     Serial.println("YES");
   }
 
+  */
+
   
-  /*static gloveState state = INITIAL;
+  static gloveState state = INITIAL;
   static int classify = 0;
   static int edit = 0;
   static char ltr;
@@ -431,7 +494,7 @@ void loop()
   
 
 
-/*
+  //State Machine transitions
  if(state == INITIAL && check_movement()){
     state = INITIAL;
   }
@@ -448,16 +511,20 @@ void loop()
     state = CLASSIFY_MOVING;
   }
   
-  else if(state == CLASSIFY && classify==1 && check_movement()){
+  else if(state == CLASSIFY && classify == 1 && check_movement()){
     state = CLASSIFY_PRINT;
   }
 
   
-  else if(state == CLASSIFY && classify== 0 && check_movement()){
+  else if(state == CLASSIFY && classify == 0 && check_movement()){
     state = CLASSIFY_MOVING;
   }
 
-  else if(state == CLASSIFY && classify== 2 && check_movement()){
+  else if(state == CLASSIFY && classify == 2 && check_movement()){
+    state = EDIT;
+  }
+
+   else if(state == CLASSIFY && classify == 2 && !check_movement()){
     state = EDIT;
   }
   
@@ -474,7 +541,7 @@ void loop()
   }
 
   else if(state == EDIT && check_movement()){
-    state = EDIT;
+    state = EDIT_MOVING;
   }
 
   else if(state == EDIT && !check_movement()){
@@ -485,15 +552,15 @@ void loop()
     state = EDIT_CLASSIFY;
   }
 
-  else if(state == CLASSIFY && edit == 1 && check_movement()){
+  else if(state == EDIT_CLASSIFY && edit == 1 && check_movement()){
     state = EDIT_EXECUTE;
   }
   
-  else if(state == CLASSIFY && edit == 0 && check_movement()){
+  else if(state == EDIT_CLASSIFY && edit == 0 && check_movement()){
     state = EDIT_MOVING;
   }
 
-  else if(state == CLASSIFY && edit == 2 && check_movement()){
+  else if(state == EDIT_CLASSIFY && edit == 2 && check_movement()){
     state = CLASSIFY_MOVING;
   }
   
@@ -513,63 +580,72 @@ void loop()
   else if(state == EDIT_WAIT && !check_movement()){
     state = EDIT_MOVING;
   }
-  
+
+  //State functions
   switch (state){
     case INITIAL:
     case CLASSIFY_MOVING:
     case CLASSIFY_WAIT:
-           Serial.print(thumbValue);
-  Serial.print("   index: ");
-  Serial.print(indexValue);
-  Serial.print("   middle: ");
-  Serial.print(middleValue);
-  Serial.print("   ring: ");
-  Serial.print(ringValue);
-  Serial.print("   pinky: ");
-  Serial.println(pinkyValue );
-  Serial.print("AccelX: ");
-  Serial.print(angles[0]);
-  Serial.print("   AccelY: ");
-  Serial.print(angles[1]);
-  Serial.print("   AccelZ: ");
-  Serial.println(angles[2]);
-   Serial.print("ring_side ");
-  Serial.print(digitalRead(ringSideTouch));
-  Serial.print("   middle_tip: ");
-  Serial.print(digitalRead(middleTipTouch));
-  Serial.print("   middle_b: ");
-  Serial.print(digitalRead(middleBTouch));
-  Serial.print("   middle_side: ");
-  Serial.print(digitalRead(middleSideTouch));
-  Serial.print("   index_tip: ");
-  Serial.print(digitalRead(indexTipTouch));
-  Serial.print("   index_side: ");
-  Serial.print(digitalRead(indexSideTouch));
-  Serial.print("   pinky_side: ");
-  Serial.println(digitalRead(pinkySideTouch));
-  
-  Serial.println(state);
 
             calibrate();
-
-            
             classify = 0;
-            //Serial.println(state);
+            Serial.println(state);
             break;
-  
+            
+    
     case CLASSIFY:
      calibrate();
-      
-   // Serial.println(state);
+     
+     //classifier function goes here: below code must be replaced with asl classifier function
+     if(data[3] == 2){
+      classify = 2;
+      edit = 2;
+     }
+     else
+     {
+      classify = 1;
+      edit = 1;
+     }
+
+     //classifier function ends here
+     
+   Serial.println(state);
+
+   classifier(ltr);
+   break;
+
+   case EDIT_CLASSIFY:  
+   calibrate();
+     
+     //classifier function goes here: below code must be replaced with edit classifier function
+     if(data[3] == 2){
+      edit = 2;
+     }
+     else
+     {
+      edit = 1;
+     }
+
+     //classifier function ends here
+     
+   Serial.println(state);
 
    classifier(ltr);
    break;
 
   case CLASSIFY_PRINT:
-  //Serial.println(state);
+  Serial.println(state);
   Serial.print(ltr);
   break;
 
+  case EDIT:
+  case EDIT_MOVING:
+  
+  case EDIT_EXECUTE:
+  case EDIT_WAIT:
+  calibrate();
+  Serial.println(state);
+  break;
   
 
   
@@ -578,29 +654,9 @@ void loop()
     calibrate();
      break;
   }
-  // To send data from the Arduino to the serial monitor window,
-  // we use the Serial.print() function.
-
-
-  // Note that the above statement uses "println", which will insert
-  // a "carriage return" character at the end of whatever it prints,
-  // moving down to the NEXT line.
-  */
-
   
- delay(150); // repeat once per second (change as you wish!)
+    
+ delay(ms); // delays the loop based on the value of ms
 }
 
 
-float getVoltage(int pin)
-{
-  // This function has one input parameter, the analog pin number
-  // to read. You might notice that this function does not have
-  // "void" in front of it; this is because it returns a floating-
-  // point value, which is the true voltage on that pin (0 to 5V).
-
-  // Here's the return statement for this function. We're doing
-  // all the math we need to do within this statement:
-  return (analogRead(pin));
- 
-}

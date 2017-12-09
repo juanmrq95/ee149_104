@@ -20,11 +20,11 @@ This sketch was written by Professor Grace O'Connell and modifyied from Ardu. Co
 // We'll use analog input 0 to measure the temperature sensor's
 // signal pin.
 
-const int thumb = 4;
-const int indexes = 3;
-const int middle = 2;
-const int ring = 1;
-const int pinky = 0;
+const int thumb = 2;
+const int indexes = 1;
+const int middle = 0;
+const int ring = 6;
+const int pinky = 7;
 
 
   float thumbValue;
@@ -87,7 +87,7 @@ void calibrate()
   middleValue = (int) (( middleValue  - 210) / 12.5);
   ringValue = (int) ((ringValue - 200) / 10);
   pinkyValue = (int) ((pinkyValue - 470) / 14.5);
- 
+ /*
   if (thumbValue >= 0 && thumbValue < 8)
   {
     thumbValue = 0;
@@ -152,7 +152,7 @@ void calibrate()
   {
     pinkyValue = 2;
   }
-
+*/
   data[0] = thumbValue;
   data[1] = indexValue;
   data[2] =  middleValue;
@@ -293,7 +293,7 @@ void loop()
     case INITIAL:
     case CLASSIFY_MOVING:
     case CLASSIFY_WAIT:
- /*            Serial.print(thumbValue);
+           Serial.print(thumbValue);
   Serial.print("   index: ");
   Serial.print(indexValue);
   Serial.print("   middle: ");
@@ -303,7 +303,7 @@ void loop()
   Serial.print("   pinky: ");
   Serial.println(pinkyValue);
   Serial.println(state);
-*/
+
             calibrate();
 
             

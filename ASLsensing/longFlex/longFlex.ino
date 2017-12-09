@@ -25,11 +25,11 @@ This sketch was written by Professor Grace O'Connell and modifyied from Ardu. Co
 // We'll use analog input 0 to measure the temperature sensor's
 // signal pin.
 
-const int thumb = 4;
-const int index = 3;
-const int middle = 2;
-const int ring = 1;
-const int pinky = 0;
+const int thumb = 2;
+const int index = 1;
+const int middle = 0;
+const int ring = 6;
+const int pinky = 7;
 
 
   float thumbValue;
@@ -128,7 +128,7 @@ void loop()
   ringValue = getVoltage(ring);
   pinkyValue = getVoltage(pinky);
 
-  calibrate();
+ // calibrate();
 
   
   // To send data from the Arduino to the serial monitor window,

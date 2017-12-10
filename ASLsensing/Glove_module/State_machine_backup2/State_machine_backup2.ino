@@ -20,6 +20,7 @@ String ltr = "Fhfgh";
 FreeSixIMU sixDOF = FreeSixIMU();
 
 
+// Sensor Data
 int ring_side = 8;
 int middle_tip = 13;
 int middle_b = 9;
@@ -27,13 +28,11 @@ int middle_side = 10;
 int index_tip = 11;
 int index_side = 17;
 int pinky_side = 12;
-
-
-const int thumb = 2;
-const int index = 1;
-const int middle = 0;
-const int ring = 6;
-const int pinky = 7;
+const int thumb = A2;
+const int index = A1;
+const int middle = A0;
+const int ring = A6;
+const int pinky = A7;
 
 
 int thumb_value = 0;
@@ -67,8 +66,8 @@ const int pinky_a = 10;
 //Feedback variable initialization//
 ////////////////////////////////////
 
-float data[5];
-float prev_data[5];
+float data[12];
+float prev_data[12];
 
 //////////////////////////////
 //Glove State Initialization//
@@ -94,11 +93,19 @@ typedef enum{
 
 void update_data(void)
 {
-  prev_data[0] = data[0];
-  prev_data[1] = data[1];
-  prev_data[2] = data[2];
-  prev_data[3] = data[3];
-  prev_data[4] = data[4];
+prev_data[0] = data[0];
+prev_data[1] = data[1];
+prev_data[2] = data[2];
+prev_data[3] = data[3];
+prev_data[4] = data[4];
+prev_data[5] = data[5];
+prev_data[6] = data[6];
+prev_data[7] = data[7];
+prev_data[8] = data[8];
+prev_data[9] = data[9];
+prev_data[10] = data[10];
+prev_data[11] = data[11];
+
 }
 
 ////////////////////////////////////
@@ -126,99 +133,37 @@ void calibrate(void)
   sixDOF.getAngles(angles);
 
 
-/* *Note* the following flex sensor custom range code were used for testing purposes. 
-    Stuff to be done here : 1) Keep using the custom range code for flex values by fine tuning the range
-                       (or) 2) Use a moving average or low pass filter for the flex values 
-                       (or) 3) Both if it provides with stable flex values
-*/
-
-//Thumb finger 
-   if (thumb_value >= 0 && thumb_value < 7)
-  {
-    thumb_value = 0;
-  }
-  else if (thumb_value >= 7 && thumb_value < 15)
-  {
-    thumb_value = 1;
-  }
-  else if (thumb_value >= 15)
-  {
-    thumb_value = 2;
-  }
-//index finger
-  if (index_value >= 0 && index_value < 7)
-  {
-    index_value = 0;
-  }
-  else if (index_value >= 7 && index_value < 15)
-  {
-    index_value = 1;
-  }
-  else if (index_value >= 15)
-  {
-    index_value = 2;
-  }
-//middle finger
-  if (middle_value >= 0 && middle_value < 7)
-  {
-    middle_value = 0;
-  }
-  else if (middle_value >= 7 && middle_value < 15)
-  {
-    middle_value = 1;
-  }
-  else if (middle_value >= 15)
-  {
-    middle_value = 2;
-  }
-//ring finger
-    if (ring_value >= 0 && ring_value < 7)
-  {
-    ring_value = 0;
-  }
-  else if (ring_value >= 7 && ring_value < 15)
-  {
-    ring_value = 1;
-  }
-  else if (ring_value >= 15)
-  {
-    ring_value = 2;
-  }
-//pinky finger
-    if (pinky_value >= 0 && pinky_value < 7)
-  {
-    pinky_value = 0;
-  }
-  else if (pinky_value >= 7 && pinky_value < 15)
-  {
-    pinky_value = 1;
-  }
-  else if (pinky_value >= 15)
-  {
-    pinky_value = 2;
-  }
-
-/* Custom range code ends here */
-
-
-  data[0] = thumb_value;
-  data[1] = index_value;
-  data[2] =  middle_value;
-  data[3] =  ring_value;
-  data[4] =  pinky_value;
-
-
+// Feedback array *Note* Not sure if this should have its own function; might be helpful
+  data[0] = digitalRead(ring_side);
+  data[1] = digitalRead(middle_tip);
+  data[2] = digitalRead(middle_b);
+  data[3] = digitalRead(middle_side);
+  data[4] = digitalRead(index_tip);
+  data[5] = digitalRead(index_side);
+  data[6] = digitalRead(pinky_side);
+  data[7] = thumb_value;
+  data[8] = index_value;
+  data[9] = middle_value;
+  data[10] = ring_value;
+  data[11] = pinky_value;
 }
 
 
 
 int array_equal(void)
 {
-  if(data[0] == prev_data[0]
-  && data[1] == prev_data[1]
-  && data[2] == prev_data[2]
-  && data[3] == prev_data[3]
-  && data[4] == prev_data[4])
+  if((data[0] == prev_data[0])
+  && (data[1] == prev_data[1])
+  && (data[2] == prev_data[2])
+  && (data[3] == prev_data[3])
+  && (data[4] == prev_data[4])
+  && (data[5] == prev_data[5])
+  && (data[6] == prev_data[6])
+  && (data[7] >= prev_data[7] - 2 && data[7] <= prev_data[7] + 2)
+  && (data[8] >= prev_data[8] - 2 && data[8] <= prev_data[8] + 2)
+  && (data[9] >= prev_data[9] - 2 && data[9] <= prev_data[9] + 2) 
+  && (data[10] >= prev_data[10] - 2 && data[10] <= prev_data[10] + 2)
+  && (data[11] >= prev_data[11] - 2 && data[11] <= prev_data[11] + 2))
   {
     return 1;
   }
@@ -243,127 +188,31 @@ int check_movement(void)
 
 void classifier()
 {
-  //static int classify = 0; 
-   // H
-  if(data[0] == 0
-  && data[1] == 0
-  && data[2] == 0
-  && data[3] == 2
-  && data[4] == 2)
+   // A
+  if(
+     data[0] == 0  // ring_side 
+  && data[1] == 0  // middle_tip
+  && data[2] == 0  // middle_b
+  && data[3] == 0  // middle_side 
+  && data[4] == 0  // index_tip
+  && data[5] == 0  // index_side
+  && data[6] == 0  // pinky_side
+  && (12 <= data[7] && data[7] <= 25)  // thumb
+  && (12 <= data[8] && data[8] <= 25)  // index
+  && (12 <= data[9] && data[9] <= 25)  // middle
+  && (12 <= data[10] && data[10] <= 25) // ring
+  && (12 <= data[11] && data[11] <= 25) // pinky
+  )
   {
-    ltr = "H";
- //   prev_ltr = "H";
-    classify = 1;
-    //return;
-   
-  }
-
-  // E
- 
-  else if(data[0] == 2
-  && data[1] == 2
-  && data[2] == 2
-  && data[3] == 2
-  && data[4] == 2)
-  {
-    ltr = "E";
-//    prev_ltr = "E";  
-    classify = 1;
-    //return;
-   
-  }
- 
-
-  // L
-  else if(data[0] == 0
-  && data[1] == 0
-  && data[2] == 2
-  && data[3] == 2
-  && data[4] == 2)
-  {
-    ltr = "L";
-    classify = 1;
-    //return;
-   
-  }
-
-
-
-   // O
-  else if(data[0] == 1
-  && data[1] == 1
-  && data[2] == 1
-  && data[3] == 1
-  && data[4] == 1)
-  {
-    Serial.println("we entered!!!");
-    ltr = "O";
-    classify = 1;
-    //return;
-   
-  }
-
-
-  // Space
-  else if(data[0] == 0
-  && data[1] == 1
-  && data[2] == 0
-  && data[3] == 0
-  && data[4] == 0)
-  {
-    ltr = "_";
-    classify = 1;
-    //return;
-   
-  }
-
-
-// W
-  else if(data[0] == 1
-  && data[1] == 0
-  && data[2] == 0
-  && data[3] == 0
-  && data[4] == 2)
-  {
-    ltr = "W";
-    classify = 1;
-    //return;
-   
-  }
-
-
-
- 
-// R
-  else if(data[0] == 1
-  && data[1] == 0
-  && data[2] == 0
-  && data[3] == 2
-  && data[4] == 2)
-  {
-    ltr = "R";
-    classify = 1;
-    //return;
-   
-  }
-
-
- 
-// D
-  else if(data[0] == 1
-  && data[1] == 0
-  && data[2] == 2
-  && data[3] == 2
-  && data[4] == 2)
-  {
-    ltr = "D";
-
-    classify = 1;
-    //return;
-   
+    Serial.println("MAMatchhhhhhhhhhh");
+    Serial.println("MAMatchhhhhhhhhhh");
+    Serial.println("MAMatchhhhhhhhhhh");
+    ltr = "TEESSSSSSTTTTTTTTT!!!!!!!!!!!!";
+    classify = 1;   
   }
   else
   {
+   Serial.println("kjhkjhjkgjkgjkgkkjhgkj");
    ltr = "Failed to match letter";
    classify = 1;
   }
@@ -501,57 +350,99 @@ void loop()
   
   switch (state){
     case INITIAL:
-    	Serial.print("Initial:   ");
-    	Serial.print("data[0]: ");
-    	Serial.print(data[0]);
-  		Serial.print("  data[1]: ");
-    	Serial.print(data[1]);
-    	Serial.print("  data[2]: ");
-    	Serial.print(data[2]);
-    	Serial.print("  data[3]: ");
-    	Serial.print(data[3]);
-    	Serial.print("  data[4]: ");
-    	Serial.println(data[4]);
-    	Serial.println();
+      Serial.print("Initial:   ");
+      Serial.print("ring: ");
+      Serial.print(data[0]);
+      Serial.print("  m_tip: ");
+      Serial.print(data[1]);
+      Serial.print("  m_b: ");
+      Serial.print(data[2]);
+      Serial.print("  m_side: ");
+      Serial.print(data[3]);
+      Serial.print("  i_tip: ");
+      Serial.print(data[4]);
+      Serial.print("  i_side: ");
+      Serial.print(data[5]);
+      Serial.print("  p_side: ");
+      Serial.println(data[6]);
+      Serial.print("  thumb: ");
+      Serial.print(data[7]);
+      Serial.print("  index: ");
+      Serial.print(data[8]);
+      Serial.print("  midd: ");
+      Serial.print(data[9]);
+      Serial.print("  ring: ");
+      Serial.print(data[10]);
+      Serial.print("  pink: ");
+      Serial.println(data[11]);
+      Serial.println();
       calibrate();
-    	break;
+      break;
 
 
     case CLASSIFY_MOVING:
-    	Serial.print("moving:   ");
-    	Serial.print("data[0]: ");
-    	Serial.print(data[0]);
-  		Serial.print("  data[1]: ");
-    	Serial.print(data[1]);
-    	Serial.print("  data[2]: ");
-    	Serial.print(data[2]);
-    	Serial.print("  data[3]: ");
-    	Serial.print(data[3]);
-    	Serial.print("  data[4]: ");
-    	Serial.println(data[4]);
-    	Serial.println(); 
-      calibrate();   	
-    	break;
+      Serial.print("moving:   ");
+      Serial.print("ring: ");
+      Serial.print(data[0]);
+      Serial.print("  m_tip: ");
+      Serial.print(data[1]);
+      Serial.print("  m_b: ");
+      Serial.print(data[2]);
+      Serial.print("  m_side: ");
+      Serial.print(data[3]);
+      Serial.print("  i_tip: ");
+      Serial.print(data[4]);
+      Serial.print("  i_side: ");
+      Serial.print(data[5]);
+      Serial.print("  p_side: ");
+      Serial.println(data[6]);
+      Serial.print("  thumb: ");
+      Serial.print(data[7]);
+      Serial.print("  index: ");
+      Serial.print(data[8]);
+      Serial.print("  midd: ");
+      Serial.print(data[9]);
+      Serial.print("  ring: ");
+      Serial.print(data[10]);
+      Serial.print("  pink: ");
+      Serial.println(data[11]);
+      Serial.println(); 
+      calibrate();    
+      break;
 
     case CLASSIFY_WAIT:
-	    classify = 0;
-	    Serial.print("wait:     ");
-	    Serial.print("data[0]: ");
-    	Serial.print(data[0]);
-  		Serial.print("  data[1]: ");
-    	Serial.print(data[1]);
-    	Serial.print("  data[2]: ");
-    	Serial.print(data[2]);
-    	Serial.print("  data[3]: ");
-    	Serial.print(data[3]);
-    	Serial.print("  data[4]: ");
-    	Serial.println(data[4]);
-    	Serial.println();
+      classify = 0;
+      Serial.print("wait:   ");
+      Serial.print("ring: ");
+      Serial.print(data[0]);
+      Serial.print("  m_tip: ");
+      Serial.print(data[1]);
+      Serial.print("  m_b: ");
+      Serial.print(data[2]);
+      Serial.print("  m_side: ");
+      Serial.print(data[3]);
+      Serial.print("  i_tip: ");
+      Serial.print(data[4]);
+      Serial.print("  i_side: ");
+      Serial.print(data[5]);
+      Serial.print("  p_side: ");
+      Serial.println(data[6]);
+      Serial.print("  thumb: ");
+      Serial.print(data[7]);
+      Serial.print("  index: ");
+      Serial.print(data[8]);
+      Serial.print("  midd: ");
+      Serial.print(data[9]);
+      Serial.print("  ring: ");
+      Serial.print(data[10]);
+      Serial.print("  pink: ");
+      Serial.println(data[11]);
+      Serial.println();
       calibrate();
-	    break;
+      break;
             
     case EDIT_CLASSIFY: 
-    	break; 
+      break; 
     case CLASSIFY:
 //     if(data[3] == 2){
 //      classify = 2;
@@ -559,49 +450,69 @@ void loop()
 //     }
 //     else
 //     {
-    	//classify = 1;
+      //classify = 1;
         //edit = 1;
 //     }
-   		Serial.print("classify ");
-  		Serial.println(state);
+      Serial.print("classify ");
+      Serial.println(state);
 
-   		classifier();
+      classifier();
       calibrate();
-   		break;
+      break;
 
-  	case CLASSIFY_PRINT:
-		  Serial.print("classify print:    ");
-		  Serial.print("data[0]: ");
-    	Serial.print(data[0]);
-  		Serial.print("  data[1]: ");
-    	Serial.print(data[1]);
-    	Serial.print("  data[2]: ");
-    	Serial.print(data[2]);
-    	Serial.print("  data[3]: ");
-    	Serial.print(data[3]);
-    	Serial.print(" data[4]: ");
-    	Serial.println(data[4]);
-    	Serial.print(" letter: ");
-    	Serial.println(ltr);
+    case CLASSIFY_PRINT:
+      Serial.println();
+      Serial.print("classify print:    ");
+      Serial.print("ring: ");
+      Serial.print(data[0]);
+      Serial.print("  m_tip: ");
+      Serial.print(data[1]);
+      Serial.print("  m_b: ");
+      Serial.print(data[2]);
+      Serial.print("  m_side: ");
+      Serial.print(data[3]);
+      Serial.print("  i_tip: ");
+      Serial.print(data[4]);
+      Serial.print("  i_side: ");
+      Serial.print(data[5]);
+      Serial.print("  p_side: ");
+      Serial.println(data[6]);
+      Serial.print("  thumb: ");
+      Serial.print(data[7]);
+      Serial.print("  index: ");
+      Serial.print(data[8]);
+      Serial.print("  midd: ");
+      Serial.print(data[9]);
+      Serial.print("  ring: ");
+      Serial.print(data[10]);
+      Serial.print("  pink: ");
+      Serial.println(data[11]);
+
+      
+      Serial.print(" letter: ");
+      Serial.println(ltr);
       Serial.print(" asdasdasd");
-    	Serial.println();
-		  break;
+      Serial.println();
+      Serial.println();
+      Serial.println();
+
+      break;
 
     case EDIT:
-    	break;
+      break;
     case EDIT_MOVING:
-    	break;
+      break;
   
     case EDIT_EXECUTE:
-    	break;
+      break;
     case EDIT_WAIT:
-    	calibrate();
-  		Serial.print("edit wait: ");
-  		Serial.println(state);
+      calibrate();
+      Serial.print("edit wait: ");
+      Serial.println(state);
       break;
 
     default:
-    	calibrate();
+      calibrate();
       break;
   }
   // To send data from the Arduino to the serial monitor window,

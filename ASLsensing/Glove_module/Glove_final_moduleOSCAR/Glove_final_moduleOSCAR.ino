@@ -18,12 +18,18 @@ float angles[3]; // yaw pitch roll
 // Glove global constants //
 ////////////////////////////
 
+int LCD_TX = 5;
+int LCD_RX = 6;
+int Speaker_In = 0;
+int Speaker_Out = 1; 
+
 int ms = 250; //250 ms: current delay
 
 // Set the FreeSixIMU object
 FreeSixIMU sixDOF = FreeSixIMU();
 
-
+char ltr = 'A';
+// Sensor Data
 int ring_side = 8;
 int middle_tip = 13;
 int middle_b = 9;
@@ -31,13 +37,12 @@ int middle_side = 10;
 int index_tip = 11;
 int index_side = 17;
 int pinky_side = 12;
-
-
-const int thumb = 2;
-const int index = 1;
-const int middle = 0;
-const int ring = 6;
-const int pinky = 7;
+const int thumb = A2;
+const int index = A1;
+const int middle = A0;
+const int ring = A6;
+const int pinky = A7;
+// Sensor Data
 
 
 int thumb_value = 0;
@@ -45,12 +50,25 @@ int index_value = 0;
 int middle_value = 0;
 int ring_value = 0;
 int pinky_value = 0;
-
 float thumb_flex_voltage;
 float index_flex_voltage;
 float middle_flex_voltage;
 float ring_flex_voltage;
 float pinky_flex_voltage;
+
+//Filter
+int filter_ring_side = 0;
+int filter_middle_tip = 0;
+int filter_middle_b = 0;
+int filter_middle_side = 0;
+int filter_index_tip = 0;
+int filter_index_side = 0;
+int filter_pinky_side = 0;
+int filter_thumb_flex = 0;
+int filter_index_flex = 0;
+int filter_middle_flex = 0;
+int filter_ring_flex = 0;
+int filter_pinky_flex = 0;
 
 const int thumbBias = 260;
 const int thumb_a = 8;
@@ -71,8 +89,8 @@ const int pinky_a = 10;
 //Feedback variable initialization//
 ////////////////////////////////////
 
-float data[5];
-float prev_data[5];
+float data[12];
+float prev_data[12];
 
 //////////////////////////////
 //Glove State Initialization//
@@ -98,11 +116,36 @@ typedef enum{
 
 void update_data(void)
 {
-  prev_data[0] = data[0];
-  prev_data[1] = data[1];
-  prev_data[2] = data[2];
-  prev_data[3] = data[3];
-  prev_data[4] = data[4];
+prev_data[0] = data[0];
+prev_data[1] = data[1];
+prev_data[2] = data[2];
+prev_data[3] = data[3];
+prev_data[4] = data[4];
+prev_data[5] = data[5];
+prev_data[6] = data[6];
+prev_data[7] = data[7];
+prev_data[8] = data[8];
+prev_data[9] = data[9];
+prev_data[10] = data[10];
+prev_data[11] = data[11];
+
+}
+
+void filter_data(void)
+{
+filter_ring_side += data[0];
+filter_middle_tip += data[1];
+filter_middle_b += data[2];
+filter_middle_side += data[3];
+filter_index_tip += data[4];
+filter_index_side = data[5];
+filter_pinky_side = data[6];
+filter_thumb_flex = data[7];
+filter_index_flex = data[8];
+filter_middle_flex = data[9];
+filter_ring_flex = data[10];
+filter_pinky_flex = data[11];
+
 }
 
 ////////////////////////////////////
@@ -130,86 +173,19 @@ void calibrate(void)
   sixDOF.getAngles(angles);
 
 
-/* *Note* the following flex sensor custom range code were used for testing purposes. 
-    Stuff to be done here : 1) Keep using the custom range code for flex values by fine tuning the range
-                       (or) 2) Use a moving average or low pass filter for the flex values 
-                       (or) 3) Both if it provides with stable flex values
-*/
-
-//Thumb finger 
-   if (thumb_value >= 0 && thumb_value < 7)
-  {
-    thumb_value = 0;
-  }
-  else if (thumb_value >= 7 && thumb_value < 15)
-  {
-    thumb_value = 1;
-  }
-  else if (thumb_value >= 15)
-  {
-    thumb_value = 2;
-  }
-//index finger
-  if (index_value >= 0 && index_value < 7)
-  {
-    index_value = 0;
-  }
-  else if (index_value >= 7 && index_value < 15)
-  {
-    index_value = 1;
-  }
-  else if (index_value >= 15)
-  {
-    index_value = 2;
-  }
-//middle finger
-  if (middle_value >= 0 && middle_value < 7)
-  {
-    middle_value = 0;
-  }
-  else if (middle_value >= 7 && middle_value < 15)
-  {
-    middle_value = 1;
-  }
-  else if (middle_value >= 15)
-  {
-    middle_value = 2;
-  }
-//ring finger
-    if (ring_value >= 0 && ring_value < 7)
-  {
-    ring_value = 0;
-  }
-  else if (ring_value >= 7 && ring_value < 15)
-  {
-    ring_value = 1;
-  }
-  else if (ring_value >= 15)
-  {
-    ring_value = 2;
-  }
-//pinky finger
-    if (pinky_value >= 0 && pinky_value < 7)
-  {
-    pinky_value = 0;
-  }
-  else if (pinky_value >= 7 && pinky_value < 15)
-  {
-    pinky_value = 1;
-  }
-  else if (pinky_value >= 15)
-  {
-    pinky_value = 2;
-  }
-
-/* Custom range code ends here */
-
 // Feedback array *Note* Not sure if this should have its own function; might be helpful
-  data[0] = thumb_value;
-  data[1] = index_value;
-  data[2] = middle_value;
-  data[3] = ring_value;
-  data[4] = pinky_value;
+  data[0] = digitalRead(ring_side);
+  data[1] = digitalRead(middle_tip);
+  data[2] = digitalRead(middle_b);
+  data[3] = digitalRead(middle_side);
+  data[4] = digitalRead(index_tip);
+  data[5] = digitalRead(index_side);
+  data[6] = digitalRead(pinky_side);
+  data[7] = thumb_value;
+  data[8] = index_value;
+  data[9] = middle_value;
+  data[10] = ring_value;
+  data[11] = pinky_value;
 
 
 }
@@ -223,7 +199,14 @@ int array_equal(void)
   && data[1] == prev_data[1]
   && data[2] == prev_data[2]
   && data[3] == prev_data[3]
-  && data[4] == prev_data[4])
+  && data[4] == prev_data[4]
+  && data[5] == prev_data[5]
+  && data[6] == prev_data[6]
+  && data[7] == prev_data[7]
+  && data[8] == prev_data[8]
+  && data[9] == prev_data[9] 
+  && data[10] == prev_data[10]
+  && data[11] == prev_data[11])
   {
     return 1;
   }
@@ -233,7 +216,7 @@ int array_equal(void)
   }
 }
 
-
+/*
 int check_movement(void)
 {
   if (array_equal() == 1)
@@ -245,138 +228,106 @@ int check_movement(void)
     return 0;
   }
 }
+*/
+
+int check_movement()
+{
+  char* randomletter;
+   if (ltr == classifier(randomletter))
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  } 
+}
 
 /////////////////////////////////////////////////////////////////
 // ASL Classifier function & possibly Edit Classifier function //
 /////////////////////////////////////////////////////////////////
 
+/* Example of Check:
+   // Letter
+  if(
+     # <= data[0] <= #  // ring_side 
+  && # <= data[1] <= #  // middle_tip
+  && # <= data[2] <= #  // middle_b
+  && # <= data[3] <= #  // middle_side 
+  && # <= data[4] <= #  // index_tip
+  && # <= data[5] <= #  // index_side
+  && # <= data[6] <= #  // pinky_side
+  && # <= data[7] <= #  // thumb
+  && # <= data[8] <= #  // index
+  && # <= data[9] <= #  // middle
+  && # <= data[10] <= # // ring
+  && # <= data[11] <= # // pinky
+  )
+  {
+    ltr = 'Letter';
+    classify = 1;
+    //return;
+   
+  }
+*/
 
-void classifier(char *ltr)
+char classifier(char *ltr)
 {
   static int classify = 0; 
-   // H
-  if(data[0] == 0
-  && data[1] == 0
-  && data[2] == 0
-  && data[3] == 2
-  && data[4] == 2)
+
+
+   // A
+  if(
+     0 <= data[0] <= 0  // ring_side 
+  && 0 <= data[1] <= 0  // middle_tip
+  && 0 <= data[2] <= 0  // middle_b
+  && 0 <= data[3] <= 0  // middle_side 
+  && 0 <= data[4] <= 0  // index_tip
+  && 1 <= data[5] <= 1  // index_side
+  && 0 <= data[6] <= 0  // pinky_side
+  && 5 <= data[7] <= 12  // thumb
+  && 16 <= data[8] <= 22  // index
+  && 16 <= data[9] <= 21  // middle
+  && 16 <= data[10] <= 22 // ring
+  && 15 <= data[11] <= 20 // pinky
+  )
+  {
+    ltr = 'A';
+    classify = 1;
+    return ltr;
+   
+  }
+
+  // H
+ 
+  if(
+     1 <= data[0] <= 1  // ring_side 
+  && 0 <= data[1] <= 0  // middle_tip
+  && 0 <= data[2] <= 0  // middle_b
+  && 0 <= data[3] <= 0  // middle_side 
+  && 0 <= data[4] <= 0  // index_tip
+  && 0 <= data[5] <= 0  // index_side
+  && 0 <= data[6] <= 0  // pinky_side
+  && 12 <= data[7] <= 14  // thumb
+  && 0 <= data[8] <= 1  // index
+  && 0 <= data[9] <= 4  // middle
+  && 16 <= data[10] <= 18 // ring
+  && 14 <= data[11] <= 16 // pinky
+  )
   {
     ltr = 'H';
- //   prev_ltr = "H";
     classify = 1;
-    //return;
-   
-  }
-
-  // E
- 
-  else if(data[0] == 2
-  && data[1] == 2
-  && data[2] == 2
-  && data[3] == 2
-  && data[4] == 2)
-  {
-    ltr = 'E';
-//    prev_ltr = "E";  
-    classify = 1;
-    //return;
+    return ltr;
    
   }
  
-
-  // L
-  else if(data[0] == 0
-  && data[1] == 0
-  && data[2] == 2
-  && data[3] == 2
-  && data[4] == 2)
-  {
-    ltr = 'L';
-    classify = 1;
-    //return;
-   
-  }
-
-
-
-   // O
-  else if(data[0] == 1
-  && data[1] == 1
-  && data[2] == 2
-  && data[3] == 2
-  && data[4] == 2)
-  {
-    ltr = 'O';
-    classify = 1;
-    //return;
-   
-  }
-
-
-  // Space
-  else if(data[0] == 0
-  && data[1] == 1
-  && data[2] == 0
-  && data[3] == 0
-  && data[4] == 0)
-  {
-    ltr = '_';
-    classify = 1;
-    //return;
-   
-  }
-
-
-// W
-  else if(data[0] == 1
-  && data[1] == 0
-  && data[2] == 0
-  && data[3] == 0
-  && data[4] == 2)
-  {
-    ltr = 'W';
-    classify = 1;
-    //return;
-   
-  }
-
-
-
- 
-// R
-  else if(data[0] == 1
-  && data[1] == 0
-  && data[2] == 0
-  && data[3] == 2
-  && data[4] == 2)
-  {
-    ltr = 'R';
-    classify = 1;
-    //return;
-   
-  }
-
-
- 
-// D
-  else if(data[0] == 1
-  && data[1] == 0
-  && data[2] == 2
-  && data[3] == 2
-  && data[4] == 2)
-  {
-    ltr = 'D';
-
-    classify = 1;
-    //return;
-   
-  }
   else
   {
-   ltr = 'F';
+   ltr = '\0';
    classify = 1;
+   return ltr;
   }
-  classify = 1;
+  classify =1;
   
 }
 
@@ -395,8 +346,6 @@ float getVoltage(int pin)
   // "void" in front of it; this is because it returns a floating-
   // point value, which is the true voltage on that pin (0 to 5V).
 
-  // Here's the return statement for this function. We're doing
-  // all the math we need to do within this statement:
   return (analogRead(pin));
  
 }
@@ -489,7 +438,7 @@ void loop()
   static gloveState state = INITIAL;
   static int classify = 0;
   static int edit = 0;
-  static char ltr;
+  //static char ltr;
 
   
 
@@ -584,33 +533,32 @@ void loop()
   //State functions
   switch (state){
     case INITIAL:
-      Serial.println("initial");
     case CLASSIFY_MOVING:
     case CLASSIFY_WAIT:
 
-         calibrate();
-         classify = 0;
-         Serial.println("wait");
-         break;
+            calibrate();
+            classify = 0;
+            Serial.println(state);
+            break;
             
     
     case CLASSIFY:
      calibrate();
      
      //classifier function goes here: below code must be replaced with asl classifier function
-//     if(data[3] == 2){
-//      classify = 2;
-//      edit = 2;
-//     }
-//     else
-//     {
+     if(data[3] == 2){
+      classify = 2;
+      edit = 2;
+     }
+     else
+     {
       classify = 1;
       edit = 1;
-//     }
+     }
 
      //classifier function ends here
      
-   Serial.println("classify");
+   Serial.println(state);
 
    classifier(ltr);
    break;
@@ -629,13 +577,13 @@ void loop()
 
      //classifier function ends here
      
-   Serial.println("edit classify");
+   Serial.println(state);
 
    classifier(ltr);
    break;
 
   case CLASSIFY_PRINT:
-  Serial.println("classsify_print");
+  Serial.println(state);
   Serial.print(ltr);
   break;
 
@@ -645,19 +593,16 @@ void loop()
   case EDIT_EXECUTE:
   case EDIT_WAIT:
   calibrate();
-  Serial.println("edit wait");
+  Serial.println(state);
   break;
   
 
   
   default:
-    
     calibrate();
-     break;
+    break;
   }
   
     
  delay(ms); // delays the loop based on the value of ms
 }
-
-

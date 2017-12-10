@@ -13,8 +13,8 @@ const int colorR = 255;
 const int colorG = 255;
 const int colorB = 255;
 
-#define rxPin   10  // Serial input (connects to Emic 2's SOUT pin)
-#define txPin   11  // Serial output (connects to Emic 2's SIN pin)
+#define rxPin   11  // Serial input (connects to Emic 2's SOUT pin)
+#define txPin   10  // Serial output (connects to Emic 2's SIN pin)
 
 SoftwareSerial emicSerial =  SoftwareSerial(rxPin, txPin);
 void setup() {

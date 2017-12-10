@@ -91,28 +91,28 @@ void loop()
   
   Serial.print("r_side ");
   Serial.print(digitalRead(ring_side));
-  Serial.print("   m_tip: ");
+  Serial.print("  m_tip: ");
   Serial.print(digitalRead(middle_tip));
-  Serial.print("   m_b: ");
+  Serial.print("  m_b: ");
   Serial.print(digitalRead(middle_b));
-  Serial.print("   m_side: ");
+  Serial.print("  m_side: ");
   Serial.print(digitalRead(middle_side));
-  Serial.print("   i_tip: ");
+  Serial.print("  i_tip: ");
   Serial.print(digitalRead(index_tip));
-  Serial.print("   i_side: ");
+  Serial.print("  i_side: ");
   Serial.print(digitalRead(index_side));
-  Serial.print("   p_side: ");
+  Serial.print("  p_side: ");
   Serial.print(digitalRead(pinky_side));
 
-  Serial.print("thumb: ");
+  Serial.print("  thumb: ");
   Serial.print(thumb_value);
-  Serial.print("   index: ");
+  Serial.print("  index: ");
   Serial.print(index_value);
-  Serial.print("   middle: ");
+  Serial.print("  middle: ");
   Serial.print(middle_value);
-  Serial.print("   ring: ");
+  Serial.print("  ring: ");
   Serial.print(ring_value);
-  Serial.print("   pinky: ");
+  Serial.print("  pinky: ");
   Serial.println(pinky_value);
 
     Serial.print(" X: ");

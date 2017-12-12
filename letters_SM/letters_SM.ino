@@ -711,9 +711,6 @@ void loop()
   // Note that the above statement uses "println", which will insert
   // a "carriage return" character at the end of whatever it prints,
   // moving down to the NEXT line.
-
-
-  
   delay(250); // repeat once per second (change as you wish!)
 }
 

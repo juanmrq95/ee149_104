@@ -1,0 +1,19 @@
+*Pick And Place List
+*Company=
+*Author=
+*eMail=
+*
+*Project=unoshield
+*Date=02:31:37
+*CreatedBy=Fritzing 0.9.3b.04.19.5c895d327c44a3114e5fcc9d8260daf0cbb52806
+*
+*
+*Coordinates in mm, always center of component
+*Origin 0/0=Lower left corner of PCB
+*Rotation in degree (0-360, math. pos.)
+*
+*No;Value;Package;X;Y;Rotation;Side;Name
+1;;;35.2934;-37.8177;0;Bottom;Part1
+2;;THT;35.3248;-67.0277;-90;Bottom;J3
+3;;THT;30.2448;-67.0277;-90;Bottom;J4
+4;;;64.5348;-25.1177;-90;Bottom;Part2

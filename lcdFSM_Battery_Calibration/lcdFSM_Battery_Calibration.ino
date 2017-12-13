@@ -116,19 +116,24 @@ void delete_letter()
 void move_cursor(int direction)
 {
   //Direction 0 = left, Direction 1 = right
-
   String word_swap;
   if (direction)
     {
-      word_swap = lcd_buffer.substring(cursor_index + 1, cursor_index + 2);
-      lcd_buffer = lcd_buffer.substring(0, cursor_index) + word_swap + "|" + lcd_buffer.substring(cursor_index + 2);
-      cursor_index++;
+      if(!(lcd_buffer.length() == cursor_index + 1))
+      {
+        word_swap = lcd_buffer.substring(cursor_index + 1, cursor_index + 2);
+        lcd_buffer = lcd_buffer.substring(0, cursor_index) + word_swap + "|" + lcd_buffer.substring(cursor_index + 2);
+        cursor_index++;
+      }
     }
   else
     {     
-      word_swap = lcd_buffer.substring(cursor_index - 1, cursor_index);
-      lcd_buffer = lcd_buffer.substring(0, cursor_index - 1) + "|" + word_swap + lcd_buffer.substring(cursor_index + 1);
-      cursor_index--;
+      if(cursor_index != 0)
+      {
+        word_swap = lcd_buffer.substring(cursor_index - 1, cursor_index);
+        lcd_buffer = lcd_buffer.substring(0, cursor_index - 1) + "|" + word_swap + lcd_buffer.substring(cursor_index + 1);
+        cursor_index--;
+      }
     } 
 }
 
@@ -306,13 +311,14 @@ if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 11,18,0,3,0,3,14,19,12,16))
     //delete_letter()    
   } else if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,8,8,19,0,5,0,5,0,5)) //check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,8,0,5,0,5,12,18,0,5)
   {
-    ltr = 'X';
-    edit = 2;   
+    ltr = '?';
+    edit = 2;  
+    send_to_lcd(); 
   }
   else
   {
    Serial.println("Edit CLassifier FAILED to match Gesture");
-   ltr = '!';
+   ltr = '+';
    edit = 0;
   }
   //classify = 1;
@@ -325,7 +331,7 @@ void classifier()
 {
 
    // A
-  if(  check_range(0,0,0,0,0,0,0,0,0,0,1,1,0,0,10+20,19+20,15+20,25+20,15+17,25+17,15+14,25+14,13+22,25+22))
+  if(  check_range(0,0,0,0,0,0,0,0,0,0,1,1,0,0,10,19,15,25,15,25,15,25,13,25))
   {
     ltr = 'A';
     classify = 1;   
@@ -432,14 +438,15 @@ void classifier()
     speech_flag = 1;
   } else if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,8,0,5,0,5,12,18,0,5))
   {
-    ltr = '+'; ///// Enter ediiiiiiit
+    ltr = '!'; ///// Enter ediiiiiiit
     classify = 2; 
     edit = 0;
+    send_to_lcd();
   }
   else
   {
    //Serial.println("\0");
-   ltr = '!';
+   ltr = '+';
    classify = 0;
   }
   //classify = 1;

@@ -149,6 +149,18 @@ void send_to_lcd()
     LCDSerial.write(ltr);
 }
 
+void send_raw_data_to_lcd()
+{
+//  for (int i = 7; i < 12; i++)
+//  {
+//    LCDSerial.write((int)data[i]); 
+//    delay(250); 
+//  }
+    LCDSerial.write((int)data[7]);    
+    LCDSerial.write((int)data[8]);
+    delay(250); 
+
+}
 
 /////////////////////
 //Feedback Function//
@@ -324,125 +336,6 @@ if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 11,18,0,3,0,3,14,19,12,16))
 void classifier()
 {
 
-   // A
-  if(  check_range(0,0,0,0,0,0,0,0,0,0,1,1,0,0,10+20,19+20,15+20,25+20,15+17,25+17,15+14,25+14,13+22,25+22))
-  {
-    ltr = 'A';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,1,0,0,0,0,0,0,0,0,15,25,0,7,0,7,0,7,0,7))
-  {
-    ltr = 'B';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,1,0,0,0,0,0,0,0,0,11,18,15,18,13,18,13,18,7,13))
-  {
-    ltr = 'C';
-    classify = 1;   
-  } else if (check_range(0,0,1,1,0,0,0,0,0,0,0,0,0,0, 7,18,0,5,10,15,10,16,7,15))
-  {
-    ltr = 'D';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 20,25,16,25,16,25,16,25,16,25))
-  {
-    ltr = 'E';
-    classify = 1;   
-  
-  } else if (check_range(0,0,0,0,0,0,0,1,1,1,0,0,0,0, 11,22,13,17,0,6,0,6,0,6))
-  {
-    ltr = 'F';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,1,0,0,0,0,0,0,0,0, 4,10,6,10,15,25,15,25,15,25))
-  {
-    ltr = 'G';
-    classify = 1;   
-  } else if (check_range(1,1,0,0,1,1,0,0,0,0,0,0,0,0, 10,18,0,5,0,5,10,20,10,20))
-  {
-    ltr = 'H';
-    classify = 1;   
-  
-  } else if (check_range(0,0,0,0,0,1,0,1,0,0,1,1,0,0, 16,22,13,25,13,25,13,25,0,5))
-  {
-    ltr = 'I';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,1,1,1,1,1,0,0,0,0, 7,18,0,6,3,10,12,22,12,22))
-  {
-    ltr = 'K';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,1,0,0,0,0,0,0,0,0, 0,3,0,4,15,25,15,25,15,25))
-  {
-    ltr = 'L';
-    classify = 1;   
-  
-  } else if (check_range(0,0,0,0,0,1,0,1,0,0,0,0,1,1, 12,23,13,25,13,25,13,22,13,20))
-  {
-    ltr = 'M';
-    classify = 1;   
-  } else if (check_range(1,1,0,0,0,1,0,0,0,0,0,0,0,0, 13,23,13,25,13,25,13,22,13,20))
-  {
-    ltr = 'N';
-    classify = 1;   
-  } else if (check_range(0,0,1,1,0,1,0,0,0,0,0,0,0,0, 11,18,12,18,13,18,13,18,7,13))
-  {
-    ltr = 'O';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 12,20,0,3,0,7,15,20,13,16))
-  {
-    ltr = 'R';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,1,1,0,0,0,0,0,0,0,0, 17,19,19,21,15,20,15,20,15,20))
-  {
-    ltr = 'S';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,1,1,1,1,1,0,0,0,0, 12,23,13,25,13,25,13,22,13,20))
-  {
-    ltr = 'T';
-    classify = 1;   
-  } else if (check_range(1,1,0,0,1,1,0,1,0,0,0,0,0,0, 11,18,0,3,0,3,14,22,10,16))
-  {
-    ltr = 'U';
-    classify = 1;   
-  } else if (check_range(1,1,0,0,0,0,0,0,0,0,0,0,0,0, 11,18,0,5,0,5,14,22,10,16))
-  {
-    ltr = 'V';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 11,20,0,5,0,5,0,5,12,19))
-  {
-    ltr = 'W';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,1,0,0,0,0,0,0,0,0, 11,15,12,15,16,20,17,22,15,19))
-  {
-    ltr = 'X';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,1,0,0,0,0,0,0,0,0, 0,9,17,20,17,20,17,20,0,5)
-)
-  {
-    ltr = 'Y';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,1,0,0,0,0,0,0,0,0, 15,17,0,3,18,20,18,21,17,18))
-  {
-    ltr = 'Z';
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,8,8,19,0,5,0,5,0,5))
-  {
-    ltr = ' '; //// Spaceeeeeee
-    classify = 1;   
-  } else if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,8,0,5,8,19,0,5,0,5))
-  {
-    ltr = '?'; ///// Speeeeeeeeech
-    classify = 1;   
-    speech_flag = 1;
-  } else if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,8,0,5,0,5,12,18,0,5))
-  {
-    ltr = '+'; ///// Enter ediiiiiiit
-    classify = 2; 
-    edit = 0;
-  }
-  else
-  {
-   //Serial.println("\0");
-   ltr = '!';
-   classify = 0;
-  }
-  //classify = 1;
   
 }
 
@@ -490,7 +383,7 @@ void loop()
   }
 
   else if(state == CLASSIFY_MOVING && check_movement()){
-    state = CLASSIFY;
+    state = CLASSIFY_MOVING;
   }
   
   else if(state == CLASSIFY_MOVING && !check_movement()){
@@ -613,6 +506,8 @@ void loop()
       Serial.print(data[10]);
       Serial.print("  pink: ");
       Serial.println(data[11]);  
+
+      send_raw_data_to_lcd();
         
 
       calibrate();    

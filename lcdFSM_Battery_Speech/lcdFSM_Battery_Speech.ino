@@ -20,12 +20,14 @@ int edit = 0;
 FreeSixIMU sixDOF = FreeSixIMU();
 
 //LCD and Speech 
-int LCD_TX = 5;
 int LCD_RX = 6;
-int Speaker_In = 0;
-int Speaker_Out = 1;
+int LCD_TX = 5;
 
-SoftwareSerial emicSerial(0, 1); 
+int Speaker_Out = 1;
+int Speaker_In = 0;
+
+
+SoftwareSerial emicSerial(Speaker_Out, Speaker_In); 
 SoftwareSerial LCDSerial(6,5);
 
 // Sensor Data
@@ -116,19 +118,24 @@ void delete_letter()
 void move_cursor(int direction)
 {
   //Direction 0 = left, Direction 1 = right
-
   String word_swap;
   if (direction)
     {
-      word_swap = lcd_buffer.substring(cursor_index + 1, cursor_index + 2);
-      lcd_buffer = lcd_buffer.substring(0, cursor_index) + word_swap + "|" + lcd_buffer.substring(cursor_index + 2);
-      cursor_index++;
+      if(!(lcd_buffer.length() == cursor_index + 1))
+      {
+        word_swap = lcd_buffer.substring(cursor_index + 1, cursor_index + 2);
+        lcd_buffer = lcd_buffer.substring(0, cursor_index) + word_swap + "|" + lcd_buffer.substring(cursor_index + 2);
+        cursor_index++;
+      }
     }
   else
     {     
-      word_swap = lcd_buffer.substring(cursor_index - 1, cursor_index);
-      lcd_buffer = lcd_buffer.substring(0, cursor_index - 1) + "|" + word_swap + lcd_buffer.substring(cursor_index + 1);
-      cursor_index--;
+      if(cursor_index != 0)
+      {
+        word_swap = lcd_buffer.substring(cursor_index - 1, cursor_index);
+        lcd_buffer = lcd_buffer.substring(0, cursor_index - 1) + "|" + word_swap + lcd_buffer.substring(cursor_index + 1);
+        cursor_index--;
+      }
     } 
 }
 
@@ -141,7 +148,14 @@ void clear_screen()
 void speech()
 {
   String speech_string = lcd_buffer.substring(0,cursor_index) + lcd_buffer.substring(cursor_index + 1);
-  emicSerial.write(speech_string.c_str());  
+  //  emicSerial.print("N7"); // select voice
+  emicSerial.print('S');  // Convert text to speech
+  emicSerial.print(speech_string);  
+  // Send the desired string to convert to speech
+  emicSerial.print('\n');
+  // Wait here until the Emic 2 responds with a ":" indicating it's ready to accept the next command
+  while (emicSerial.read() != ':');   
+  delay(500);
 }
 
 void send_to_lcd()
@@ -306,13 +320,14 @@ if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 11,18,0,3,0,3,14,19,12,16))
     //delete_letter()    
   } else if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,8,8,19,0,5,0,5,0,5)) //check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,8,0,5,0,5,12,18,0,5)
   {
-    ltr = 'X';
-    edit = 2;   
+    ltr = '?';
+    edit = 2;  
+    send_to_lcd(); 
   }
   else
   {
-   Serial.println("Edit CLassifier FAILED to match Gesture");
-   ltr = '!';
+//   Serial.println("Edit CLassifier FAILED to match Gesture");
+   ltr = '-';
    edit = 0;
   }
   //classify = 1;
@@ -325,7 +340,7 @@ void classifier()
 {
 
    // A
-  if(  check_range(0,0,0,0,0,0,0,0,0,0,1,1,0,0,10+20,19+20,15+20,25+20,15+17,25+17,15+14,25+14,13+22,25+22))
+  if(  check_range(0,0,0,0,0,0,0,0,0,0,1,1,0,0,10,19,15,25,15,25,15,25,13,25))
   {
     ltr = 'A';
     classify = 1;   
@@ -427,19 +442,20 @@ void classifier()
     classify = 1;   
   } else if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,8,0,5,8,19,0,5,0,5))
   {
-    ltr = '?'; ///// Speeeeeeeeech
+    ltr = '+'; ///// Speeeeeeeeech
     classify = 1;   
     speech_flag = 1;
   } else if (check_range(0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,8,0,5,0,5,12,18,0,5))
   {
-    ltr = '+'; ///// Enter ediiiiiiit
+    ltr = '!'; ///// Enter ediiiiiiit
     classify = 2; 
     edit = 0;
+    send_to_lcd();
   }
   else
   {
    //Serial.println("\0");
-   ltr = '!';
+   ltr = '-';
    classify = 0;
   }
   //classify = 1;
@@ -448,11 +464,6 @@ void classifier()
 
 void setup()
 {
-  //Serial USB setup
-  LCDSerial.begin(9600);
-  emicSerial.begin(9600);
-  Serial.begin(9600);
-
   //GPIO pin initialization
   pinMode(ring_side, INPUT);
   pinMode(middle_tip, INPUT);
@@ -461,16 +472,27 @@ void setup()
   pinMode(index_tip, INPUT);
   pinMode(index_side, INPUT);
   pinMode(pinky_side, INPUT);
-  //I2C pins setup
+  pinMode(Speaker_Out, INPUT);
+  pinMode(Speaker_In, OUTPUT);
   
+  //Serial USB setup
+  LCDSerial.begin(9600);
+  emicSerial.begin(9600);
+  //  Serial.begin(9600);
+
+  // Speaker board set_up
+  emicSerial.print('\n');             // Send a CR in case the system is already up
+  while (emicSerial.read() != ':');   // When the Emic 2 has initialized and is ready, it will send a single ':' character, so wait here until we receive it
+  delay(10);                          // Short delay
+  emicSerial.flush();                 // Flush the receive buffer
+  
+  //I2C pins setup
   Wire.begin();
   
   //Accelerometer and Gyroscope Setup
-  
   delay(5);
   sixDOF.init(); //begin the IMU
   delay(5); 
-
 }
 
 void loop()
@@ -514,16 +536,16 @@ void loop()
   }
 
   else if(state == CLASSIFY && classify == 2 && check_movement()){
-    Serial.println("");  
-    Serial.println("EDIT MODE ENTERED");  
-    Serial.println(" ");  
+//    Serial.println("");  
+//    Serial.println("EDIT MODE ENTERED");  
+//    Serial.println(" ");  
     state = EDIT_WAIT;
   }
 
   else if(state == CLASSIFY && classify == 2 && !check_movement()){
-    Serial.println("");  
-    Serial.println("EDIT MODE ENTERED");  
-    Serial.println(" ");  
+//    Serial.println("");  
+//    Serial.println("EDIT MODE ENTERED");  
+//    Serial.println(" ");  
     state = EDIT_WAIT;
   }
   
@@ -589,30 +611,30 @@ void loop()
 
 
     case CLASSIFY_MOVING:
-      Serial.print("ring: ");
-      Serial.print(data[0]);
-      Serial.print("  m_tip: ");
-      Serial.print(data[1]);
-      Serial.print("  m_b: ");
-      Serial.print(data[2]);
-      Serial.print("  m_side: ");
-      Serial.print(data[3]);
-      Serial.print("  i_tip: ");
-      Serial.print(data[4]);
-      Serial.print("  i_side: ");
-      Serial.print(data[5]);
-      Serial.print("  p_side: ");
-      Serial.println(data[6]);
-      Serial.print("  thumb: ");
-      Serial.print(data[7]);
-      Serial.print("  index: ");
-      Serial.print(data[8]);
-      Serial.print("  midd: ");
-      Serial.print(data[9]);
-      Serial.print("  ring: ");
-      Serial.print(data[10]);
-      Serial.print("  pink: ");
-      Serial.println(data[11]);  
+//      Serial.print("ring: ");
+//      Serial.print(data[0]);
+//      Serial.print("  m_tip: ");
+//      Serial.print(data[1]);
+//      Serial.print("  m_b: ");
+//      Serial.print(data[2]);
+//      Serial.print("  m_side: ");
+//      Serial.print(data[3]);
+//      Serial.print("  i_tip: ");
+//      Serial.print(data[4]);
+//      Serial.print("  i_side: ");
+//      Serial.print(data[5]);
+//      Serial.print("  p_side: ");
+//      Serial.println(data[6]);
+//      Serial.print("  thumb: ");
+//      Serial.print(data[7]);
+//      Serial.print("  index: ");
+//      Serial.print(data[8]);
+//      Serial.print("  midd: ");
+//      Serial.print(data[9]);
+//      Serial.print("  ring: ");
+//      Serial.print(data[10]);
+//      Serial.print("  pink: ");
+//      Serial.println(data[11]);  
         
 
       calibrate();    
@@ -636,6 +658,8 @@ void loop()
     case CLASSIFY_PRINT:
       if (speech_flag == 1)
       {
+        send_to_lcd();
+        delay(250);
         speech();
         speech_flag = 0; 
       }
@@ -645,7 +669,7 @@ void loop()
         send_to_lcd();
       }
       
-      Serial.println(lcd_buffer);
+//      Serial.println(lcd_buffer);
       // Sends the string buffer to the lcd to print
       break;
 
@@ -660,10 +684,10 @@ void loop()
       break;
   
     case EDIT_EXECUTE:
-      Serial.println();
-      Serial.print("EDIT_EXECUTE   ");
-      Serial.print(ltr);
-      Serial.println();
+//      Serial.println();
+//      Serial.print("EDIT_EXECUTE   ");
+//      Serial.print(ltr);
+//      Serial.println();
       send_to_lcd();
       
       edit = 3;  
